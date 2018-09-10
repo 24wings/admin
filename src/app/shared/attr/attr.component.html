@@ -1,0 +1,16 @@
+<!-- 显示模式 -->
+
+
+<!-- 查询条件 -->
+<ng-container>
+    <span [ngSwitch]="attr.type.toLowerCase()">
+<ng-container *ngSwitchCase="'date'">
+          {{attr.alias|| attr.type  }}
+      <nz-date-picker [(ngModel)]="attr.value"  nzShowTime ></nz-date-picker>
+     
+  </ng-container>
+ 
+
+</span>
+
+</ng-container>

@@ -1,0 +1,106 @@
+<div style="height: 10px">
+</div>
+<div style="    border: 1px dashed #f0f0f0;
+  padding: 10px;
+  margin: 10px 0;
+  width: 300px;
+  text-align: center;cursor: pointer;" (click)="state=View.CreateSubject">
+    <i class="anticon anticon-plus"></i><span>添加一级分类</span>
+</div>
+<button (click)="subjectList()" nz-button nzType="primary">刷新</button>
+
+
+
+<nz-table #nzTable>
+    <thead>
+        <tr>
+            <th></th>
+            <th nzWidth="10%">科目名</th>
+            <th nzWidth="10%">编号</th>
+            <th nzWidth="10%">父id</th>
+
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+
+
+
+
+        <tr *ngFor="let subject of subjects">
+            <!-- [nzIndentSize]="subject.level*20" nzShowExpand (nzExpandChange)="openChild(subject,$event)" -->
+            <td [nzIndentSize]="subject.level*20" nzShowExpand (nzExpandChange)="openChild(subject,$event)"></td>
+            <td>
+                {{subject.subName}}
+            </td>
+            <td>{{subject.subCode}}</td>
+            <td>{{subject.parentId}}</td>
+
+            <td>
+
+
+                <i class="anticon anticon-plus-circle-o" style="margin: 0 10px;cursor: pointer;" (click)="ShowAddSubject(subject)" nz-tooltip nzTitle="新增"></i>
+                <!-- <i class="anticon anticon-minus-circle-o" style="margin: 0 10px;cursor: pointer;" nz-popconfirm nzTitle="确认删除吗" (nzOnConfirm)="deleteSub(subject)" (nzOnCancel)="cancel()"></i> -->
+                <i class="iconfont icon-bianji5" style="margin: 0 10px;cursor: pointer;" (click)="showSubject(subject)" nz-tooltip nzTitle="编辑"></i>
+
+            </td>
+        </tr>
+
+
+    </tbody>
+</nz-table>
+
+<nz-modal [(nzVisible)]="View.CreateSubject==state" nzTitle="添加收支科目名称" (nzOnCancel)="handleCancel()" (nzOnOk)="AddSubject() ">
+    <ng-contant *ngIf="selectSubject">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4" nzRequired>上级分类</nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <input type="text" nz-input placeholder="" [(ngModel)]="selectSubject.subName" disabled>
+
+            </nz-form-control>
+        </nz-form-item>
+    </ng-contant>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzRequired>收支科目名称</nz-form-label>
+        <nz-form-control [nzSpan]="8">
+            <input type="text" nz-input placeholder="请输入收支科目名称" [(ngModel)]="newSubject.subName">
+
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzRequired>编码</nz-form-label>
+        <nz-form-control [nzSpan]="8">
+            <input type="number" nz-input placeholder="请输入收支科目" [(ngModel)]="newSubject.subCode ">
+
+        </nz-form-control>
+    </nz-form-item>
+
+
+</nz-modal>
+<nz-modal [(nzVisible)]="state==View.EditSubject" nzTitle="编辑商品类" (nzOnCancel)="handleCancel()" (nzOnOk)="okeditSubject()">
+    <ng-contant *ngIf="editSubject">
+        <!-- <nz-form-item>
+            <nz-form-label [nzSpan]="4" nzRequired>上级分类</nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <input type="text" nz-input placeholder="" [(ngModel)]="editCategory.parentId" disabled>
+
+            </nz-form-control>
+        </nz-form-item> -->
+
+
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4" nzRequired>商品名称</nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <input type="text" nz-input placeholder="请输入商品名称" [(ngModel)]="editSubject.subName">
+
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4" nzRequired>商品编码 </nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <input type="number" nz-input placeholder="请输入商品编码" [(ngModel)]="editSubject.subCode">
+
+            </nz-form-control>
+        </nz-form-item>
+    </ng-contant>
+</nz-modal>

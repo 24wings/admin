@@ -1,0 +1,131 @@
+<ng-container>
+  <nz-card nzTitle="订单查询">
+    <div nz-col [nzSm]="8" [nzXs]="24" class="flex-full">
+      <nz-form-item class="flex-center">
+        <nz-form-label nzRequired [nzSpan]="7">订单号</nz-form-label>
+        <nz-form-control [nzSpan]="17">
+          <input nz-input type="text" [(ngModel)]="orderNo" (keyup.enter)="queryOrder()">
+        </nz-form-control>
+      </nz-form-item>
+      <!-- <nz-form-item class="flex-center">
+        <nz-form-label nzRequired>会员编号</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" [nzSpan]="3" class="formControl">
+          <input nz-input type="text" #priceInput (keyup.enter)="queryOrder()">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="flex-center">
+        <nz-form-label nzRequired>会员姓名</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" [nzSpan]="3">
+          <input nz-input type="text" #priceInput (keyup.enter)="queryOrder()">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="flex-center">
+        <nz-form-label nzRequired>手机号</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" [nzSpan]="3">
+          <input nz-input type="text" #priceInput (keyup.enter)="queryOrder()">
+        </nz-form-control>
+      </nz-form-item> -->
+      <nz-form-item>
+        <nz-form-control>
+          <button nz-button nzType="primary" (click)="queryOrder()">查询订单</button>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </nz-card>
+
+  <nz-card nzTitle="订单信息">
+
+    <div style="display: flex;justify-content: space-around;">
+      <div style="display: flex;flex-direction: column;width: 45%;align-items: flex-end;">
+        <div class="exchangeFlex">
+          <nz-form-item class="flex-center">
+            <nz-form-label>退货订单编号</nz-form-label>
+            <nz-form-control>
+              <input nz-input [(ngModel)]="refundOrder.orderNo">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="exchangeFlex">
+          <nz-form-item class="flex-center">
+            <nz-form-label>退货订单状态</nz-form-label>
+            <nz-form-control>
+              <input nz-input [(ngModel)]="refundOrder.status">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="exchangeFlex">
+          <nz-form-item class="flex-center">
+            <nz-form-label>货款总额</nz-form-label>
+            <nz-form-control>
+              <input nz-input [(ngModel)]="refundOrder.apAmt">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="exchangeFlex">
+          <nz-form-item class="flex-center">
+            <nz-form-label>卖方手续费</nz-form-label>
+            <nz-form-control>
+              <input nz-input [(ngModel)]="refundOrder.sellerFee">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div style="display: flex;flex-direction: column;width: 45%;">
+        <div class="exchangeFlex">
+          <nz-form-item class="flex-center">
+            <nz-form-label>订单类型</nz-form-label>
+            <nz-form-control>
+              <input nz-input [(ngModel)]="refundOrder.payType">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="exchangeFlex">
+          <nz-form-item class="flex-center">
+            <nz-form-label>卖方姓名</nz-form-label>
+            <nz-form-control>
+              <input nz-input [(ngModel)]="sellerMember.name">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="exchangeFlex">
+          <ng-container *ngIf="!buyerMember">
+            <nz-form-item class="flex-center">
+              <nz-form-label>买方姓名</nz-form-label>
+              <nz-form-control>
+                <input nz-input [(ngModel)]="refundOrder.buyerInfo">
+              </nz-form-control>
+            </nz-form-item>
+          </ng-container>
+          <ng-container *ngIf="buyerMember">
+            <nz-form-item class="flex-center">
+              <nz-form-label>买方姓名</nz-form-label>
+              <nz-form-control>
+                <input nz-input [(ngModel)]="buyerMember.name">
+              </nz-form-control>
+            </nz-form-item>
+          </ng-container>
+
+        </div>
+        <div class="exchangeFlex">
+          <nz-form-item class="flex-center">
+            <nz-form-label>买方手续费</nz-form-label>
+            <nz-form-control>
+              <input nz-input [(ngModel)]="refundOrder.buyerFee">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </div>
+    <div>
+      <nz-form-item style="display: flex;justify-content: center;">
+        <nz-form-control [nzOffset]="7" [nzSpan]="12">
+
+          <button nz-button nzType="primary" (click)="orderRefund()">退货</button>
+          <button nz-button (click)="resetPayInfo()">重置</button>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </nz-card>
+
+</ng-container>

@@ -1,0 +1,63 @@
+<button nz-button nzType="primary" (click)="state=View.DevCreate" style="margin-top:20px;">添加开发者</button>
+<div style="margin: 20px 0;width: 90%">
+    <nz-table #rowSelectionTable [nzData]="devs" style="text-align: center;" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageIndexChange)="refreshStatus()" (nzPageSizeChange)="refreshStatus()">
+        <thead>
+            <tr>
+                <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+                <th>开发者ID</th>
+                <th>用户名</th>
+                <th>密码</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let dev of devs">
+                <td nzShowCheckbox [(nzChecked)]="dev.checked" (nzCheckedChange)="refreshStatus($event)"></td>
+                <td>{{dev.devId}}</td>
+                <td>{{dev.devUserName}}</td>
+                <td>{{dev.password}}</td>
+                <td>
+                    <Button nz-button nzType="primary" (click)="selectedDev=dev;state=View.DevEdit">编辑</Button>
+                    <button nz-button nzType="danger" nz-popconfirm nzTitle="确认删除吗?" nzOkText="确认" nzCancelText="取消" (nzOnConfirm)="developerDelete(dev)">删除</button></td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>
+
+<nz-modal [(nzVisible)]="View.DevCreate==state" nzTitle="添加开发人员" (nzOnCancel)="state=View.DevList;" (nzOnOk)="state=View.DevList;developerCreate()">
+    <div nz-form>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>开发人员用户名
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input nz-input [(ngModel)]="newDev.devUserName">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>密码
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input nz-input [(ngModel)]="newDev.password" type="password">
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="View.DevEdit==state" nzTitle="编辑开发人员" (nzOnCancel)="state=View.DevList;" (nzOnOk)="state=View.DevList;developerUpdate()">
+    <div nz-form *ngIf="selectedDev">
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>开发人员用户名
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input nz-input [(ngModel)]="selectedDev.devUserName">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>密码
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input nz-input [(ngModel)]="selectedDev.password" type="password">
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+</nz-modal>

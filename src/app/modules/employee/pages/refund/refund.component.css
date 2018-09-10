@@ -1,0 +1,11 @@
+.formControl{
+    width: 100px;
+  }
+
+  .exchangeFlex{
+    display: flex;
+  }
+  .exchangeFlex .ant-form-item{
+    display: flex;
+    margin-bottom: 10px;
+  }

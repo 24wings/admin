@@ -1,0 +1,100 @@
+<ng-container *ngIf="parentMetaObject&&parentFields">
+    <h1>{{parentMetaObject.tableName}}</h1>
+
+
+    <!-- 查询框 -->
+    <div style="display:flex;" *ngIf="relationConfig.searchbar">
+        <nz-input-group nzCompact *ngFor="let query of parentQueryMetaOptions" style="flex:1">
+            <label style="    height: 20px; text-align: center;vertical-align: middle;">{{query.fieldName}}</label>
+            <nz-select [ngModel]="query.queryCondition">
+                <nz-option [nzLabel]="condition.label" [nzValue]="condition.value" *ngFor="let condition of queryConditions"></nz-option>
+
+            </nz-select>
+            <input type="text" nz-input [(ngModel)]="query.value" style="width:50%;">
+        </nz-input-group>
+        <div style="flex:1">
+            <button nz-button nzType="primary" (click)="parentSearch()">查询</button>
+        </div>
+    </div>
+
+    <hr>
+    <nz-table #basicTable>
+        <thead>
+            <tr>
+                <th *ngFor="let field of parentShowFields">{{field.alias || field.fieldName}}</th>
+                <th [nzWidth]="'200px'">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of parentDataSet">
+                <td *ngFor="let field of parentShowFields">{{data[field.fieldName]}}</td>
+                <td><button nz-button nzType="primary" (click)="parentEdit(data)">编辑</button>
+                    <button *ngFor="let button of relationConfig.buttons" nz-button (click)="doParentAction(button,data)">{{button.text}}</button>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+
+</ng-container>
+
+
+<nz-modal [nzVisible]="View.UpdateParent==state" [nzTitle]="'更新'" (nzOnCancel)="state=View.ListParent" (nzOnOk)="state=View.ListParent;updateParent()">
+    <ng-container *ngIf="selectedParentData">
+        <nz-form-item *ngFor="let field of parentUpdateFields;let i=index">
+            <nz-form-label [nzXs]="24 " [nzSm]="4 ">{{field.alias || field.fieldName}}:</nz-form-label>
+            <nz-form-control [nzXs]="24 " [nzSm]="20 " [nzOffset]="i==0?0:4 ">
+                <input nz-input style="width: 60%; margin-right:8px; " [placeholder]="field.alias || field.placeholder" [(ngModel)]="selectedParentData[field.fieldName]">
+            </nz-form-control>
+        </nz-form-item>
+    </ng-container>
+</nz-modal>
+
+
+
+<!-- 子视图 -->
+
+<ng-container *ngIf="childMetaObject&&childFields">
+    <h1>子视图</h1>
+    <!-- 查询框 -->
+    <div style="display:flex;" *ngIf="selectedActionButton.searchbar">
+        <nz-input-group nzCompact *ngFor="let query of childQueryMetaOptions" style="flex:1">
+            <label style="    height: 20px; text-align: center;vertical-align: middle;">{{query.fieldName}}</label>
+            <nz-select [ngModel]="query.queryCondition">
+                <nz-option [nzLabel]="condition.label" [nzValue]="condition.value" *ngFor="let condition of queryConditions"></nz-option>
+
+            </nz-select>
+            <input type="text" nz-input [(ngModel)]="query.value" style="width:50%;">
+        </nz-input-group>
+        <div style="flex:1">
+            <button nz-button nzType="primary" (click)="childSearch()">查询</button>
+        </div>
+    </div>
+    <hr>
+    <nz-table #basicTable>
+        <thead>
+            <tr>
+                <th *ngFor="let field of childShowFields">{{field.alias || field.fieldName}}</th>
+                <th [nzWidth]="'200px'">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of childrenDataSet">
+                <td *ngFor="let field of childShowFields">{{data[field.fieldName]}}</td>
+                <td><button nz-button nzType="primary" (click)="childEdit(data)">编辑</button>
+                    <!-- <button *ngFor="let button of relationConfig.child.buttons" nz-button (click)="doParentAction(button.action,data)">{{button.text}}</button> -->
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-container>
+<!-- 更新子视图 -->
+<nz-modal [nzVisible]="View.UpdateChild==state" [nzTitle]="'更新子视图'" (nzOnCancel)="state=View.ListParent" (nzOnOk)="state=View.ListParent;updateChild()">
+    <ng-container *ngIf="selectedChildData">
+        <nz-form-item *ngFor="let field of childUpdateFields;let i=index">
+            <nz-form-label [nzXs]="24 " [nzSm]="4 ">{{field.alias || field.fieldName}}:</nz-form-label>
+            <nz-form-control [nzXs]="24 " [nzSm]="20 " [nzOffset]="i==0?0:4 ">
+                <input nz-input style="width: 60%; margin-right:8px; " [placeholder]="field.alias || field.placeholder" [(ngModel)]="selectedChildData[field.fieldName]">
+            </nz-form-control>
+        </nz-form-item>
+    </ng-container>
+</nz-modal>

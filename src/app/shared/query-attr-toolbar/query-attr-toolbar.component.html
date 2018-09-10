@@ -1,0 +1,6 @@
+<div style="display:flex;margin-bottom: 20px;">
+    <app-attr [attr]="attr" *ngFor="let attr of queryAttributes" #attrCom> </app-attr>
+    <div style="flex:1" *ngIf="showSearchButton">
+        <button nz-button nzType="primary" (click)="search()">查询</button>
+    </div>
+</div>

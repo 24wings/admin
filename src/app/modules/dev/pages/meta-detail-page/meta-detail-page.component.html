@@ -1,0 +1,47 @@
+<ng-container *ngIf="metaObject&&metaFields">
+    <h1>{{metaObject.tableName}}</h1>
+
+
+    <!-- 查询框 -->
+    <div style="display:flex;">
+        <nz-input-group nzCompact *ngFor="let query of queryMetaOptions" style="flex:1">
+            <label style="    height: 20px; text-align: center;vertical-align: middle;">{{query.fieldName}}</label>
+            <nz-select [ngModel]="query.queryCondition">
+                <nz-option [nzLabel]="condition.label" [nzValue]="condition.value" *ngFor="let condition of queryConditions"></nz-option>
+
+            </nz-select>
+            <input type="text" nz-input [(ngModel)]="query.value" style="width:50%;">
+        </nz-input-group>
+        <div style="flex:1">
+            <button nz-button nzType="primary" (click)="search()">查询</button>
+        </div>
+    </div>
+
+    <hr>
+    <nz-table #basicTable [nzData]="metaFields">
+        <thead>
+            <tr>
+                <th *ngFor="let field of metaFields">{{field.alias || field.fieldName}}</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of dataSet">
+                <td *ngFor="let field of metaFields">{{data[field.fieldName]}}</td>
+                <td><button nz-button nzType="primary" (click)="edit(data)">编辑</button></td>
+            </tr>
+        </tbody>
+    </nz-table>
+
+</ng-container>
+
+<nz-modal [nzVisible]="View.Update==state" [nzTitle]="'更新'" (nzOnCancel)="state=View.List" (nzOnOk)="state=View.List;update()">
+    <ng-container *ngIf="selectedData">
+        <nz-form-item *ngFor="let field of updateFields;let i=index">
+            <nz-form-label [nzXs]="24 " [nzSm]="4 ">{{field.alias || field.fieldName}}:</nz-form-label>
+            <nz-form-control [nzXs]="24 " [nzSm]="20 " [nzOffset]="i==0?0:4 ">
+                <input nz-input style="width: 60%; margin-right:8px; " [placeholder]="field.alias || field.placeholder" [(ngModel)]="selectedData[field.fieldName]">
+            </nz-form-control>
+        </nz-form-item>
+    </ng-container>
+</nz-modal>

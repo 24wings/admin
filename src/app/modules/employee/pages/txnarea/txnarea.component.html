@@ -1,0 +1,90 @@
+<div style="height: 10px">
+</div>
+
+<div style="    border: 1px dashed #f0f0f0;
+padding: 10px;
+margin: 10px 0;
+width: 300px;
+text-align: center;cursor: pointer;" (click)=" state=View.CreatTxa">
+    <i class="anticon anticon-plus"></i>
+    <span>新增交易区</span>
+</div>
+<button (click)="this.ListTxa()" nz-button nzType="primary">刷新</button>
+<nz-table #basicTable [nzPageIndex]="page" [nzPageSize]="pageSize" [nzTotal]="count">
+    <thead>
+        <tr>
+            <th>交易区编码</th>
+            <th>名称</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let txnarea of txnareas">
+            <td>{{txnarea.txnCode}}</td>
+            <td>{{txnarea.txnName}}</td>
+
+            <td>
+                <i class="iconfont icon-bianji5" style="margin: 0 10px;cursor: pointer;" (click)="showTxa(txnarea)" nz-tooltip nzTitle="编辑"></i>
+                <i class="anticon anticon-minus-circle-o" style="margin: 0 10px;cursor: pointer;" nz-tooltip nzTitle="删除" nz-popconfirm nzTitle="确认删除吗"
+                    (nzOnConfirm)="deleteTxn(txnarea)" (nzOnCancel)="handleCancel()"></i>
+
+                <i class="anticon anticon-profile" style="margin: 0 10px;cursor: pointer;" nz-tooltip nzTitle="商品管理" [routerLink]="[ './'+txnarea.txnId+'/commodity-type' ]"></i>
+
+            </td>
+
+        </tr>
+    </tbody>
+</nz-table>
+
+
+
+<nz-modal [(nzVisible)]="View.CreatTxa==state" nzTitle="新增交易区" (nzOnCancel)="handleCancel()" (nzOnOk)="AddTxa()">
+
+
+
+
+
+
+
+
+    <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzRequired>名称</nz-form-label>
+        <nz-form-control [nzSpan]="8">
+            <input type="text" nz-input placeholder="名称" [(ngModel)]="newTxnarea.txnName">
+
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzRequired>编码 </nz-form-label>
+        <nz-form-control [nzSpan]="8">
+            <input type="number" nz-input placeholder="编码" [(ngModel)]="newTxnarea.txnCode">
+
+        </nz-form-control>
+    </nz-form-item>
+
+
+</nz-modal>
+
+
+<nz-modal [(nzVisible)]="View.UpdateTxa==state" nzTitle="修改交易区" (nzOnCancel)="handleCancel()" (nzOnOk)="updateTxa()">
+
+    <div *ngIf="editTxn">
+
+
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4" nzRequired>名称</nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <input type="text" nz-input placeholder="名称" [(ngModel)]="editTxn.txnName">
+
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4" nzRequired>编码 </nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <input type="text" nz-input placeholder="编码" [(ngModel)]="editTxn.txnCode">
+
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+
+</nz-modal>

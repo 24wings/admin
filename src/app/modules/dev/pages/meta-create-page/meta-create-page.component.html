@@ -1,0 +1,197 @@
+<nz-modal [nzVisible]="EditAddtionJSON" [nzWidth]="1000" [nzTitle]="'附加参数'" (nzOnCancel)="EditAddtionJSON=false" (nzOnOk)="saveAddtionJson()">
+    <!-- <textarea cols="100" rows="10" [(ngModel)]="addtionjson"></textarea> -->
+    <i class="anticon anticon-plus-circle-o" (click)="addAttr()"></i>
+    <div nz-form [nzLayout]="'inline'" *ngFor="let attr of config.queryAttributes">
+        <nz-form-item>
+            <nz-form-label nz-col nzSpan="8">键名</nz-form-label>
+            <nz-form-control style="width: 120px;" nz-col nzSpan="8">
+                <nz-input-group nzPrefixIcon="anticon  ">
+                    <input nz-input [(ngModel)]="attr.key" placeholder="查询分类">
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nz-col nzSpan="8">类型</nz-form-label>
+            <nz-form-control style="width: 120px;" nz-col nzSpan="8">
+                <nz-input-group nzPrefixIcon="anticon  ">
+                    <nz-select style="width: 120px;" [(ngModel)]="attr.type" nzAllowClear nzPlaceHolder="Choose">
+                        <nz-option [nzValue]="option.value" [nzLabel]="option.label" *ngFor="let option of attrOptions"></nz-option>
+                    </nz-select>
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nz-col nzSpan="8">别名</nz-form-label>
+            <nz-form-control style="width: 120px;" nz-col nzSpan="8">
+                <nz-input-group nzPrefixIcon="anticon  ">
+                    <input nz-input [(ngModel)]="attr.alias" placeholder="查询分类">
+                </nz-input-group>
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+</nz-modal>
+<ng-container *ngIf="state!=View.EditMetaFieldType">
+    <div nz-row style="    padding-top: 10px;">
+
+        <div nz-col nzSpan="4">
+            <nz-form-item>
+                <nz-form-label nz-col nzSpan="8">查询分类</nz-form-label>
+                <nz-form-control style="width: 120px;" nz-col nzSpan="8">
+
+                    <nz-input-group nzPrefixIcon="anticon  ">
+                        <input nz-input [(ngModel)]="newMetaObject.groupName" placeholder="查询分类">
+                    </nz-input-group>
+
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzSpan="4">
+            <nz-form-item>
+                <nz-form-label nz-col nzSpan="8">查询名称</nz-form-label>
+                <nz-form-control style="width: 120px;" nz-col nzSpan="8">
+                    <nz-input-group nzPrefixIcon="anticon  ">
+                        <input nz-input [(ngModel)]="newMetaObject.objectCode" type="text" placeholder="查询名称">
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzSpan="4">
+            <nz-form-item>
+                <nz-form-label nz-col nzSpan="8">更新表名</nz-form-label>
+                <nz-form-control style="width: 120px;" nz-col nzSpan="8">
+                    <nz-input-group nzPrefixIcon="anticon ">
+                        <input nz-input type="text" placeholder="更新表名" [(ngModel)]="newMetaObject.tableName">
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzSpan="4">
+            <nz-form-item>
+                <nz-form-label nz-col nzSpan="8">主键名</nz-form-label>
+                <nz-form-control style="width: 120px;" nz-col nzSpan="8">
+                    <nz-input-group nzPrefixIcon="anticon ">
+                        <input nz-input type="text" placeholder="主键名" [(ngModel)]="newMetaObject.pkKey">
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col nzSpan="2" style="    margin-top: 4px;">
+            <button nz-button (click)="queryField()" nzType="primary" style="margin-right: 20px;margin-left: 20px;">预览</button>
+
+        </div>
+
+        <div nz-col nzSpan="4" style="    margin-top: 4px;">
+
+            <button nz-button nzType="primary" (click)="createMetaObject()" *ngIf="!objectCode" style="    margin-left: 20px;"> 保存</button>
+            <button nz-button nzType="primary" (click)="updateMetaObject()" *ngIf="objectCode" style="    margin-left: 20px;"> 更新</button>
+
+        </div>
+
+    </div>
+    <div nz-col style="    display: flex;
+    align-items: center;    width: 100%">
+
+        <textarea [(ngModel)]="newMetaObject.querySql" cols="150" rows="3" style="width: 60%" (blur)="parseSql()"></textarea>
+        <div style="width: 40%">
+            <div><button nz-button (click)="EditAddtionJSON=true">附加参数</button></div>
+        </div>
+
+    </div>
+    <nz-table #basicTable [nzData]=" fields" style="    width: 92%;
+display: block;
+margin-top: 10px;">
+        <thead>
+            <tr>
+                <th>字段</th>
+                <th [nzWidth]="'150px'">描述</th>
+
+                <th>类型</th>
+
+                <th>预设值</th>
+                <th>宽度</th>
+                <th>更新</th>
+                <th>显示</th>
+                <th>查询</th>
+                <th>序号</th>
+
+                <th>参数</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of fields">
+
+                <td>{{data.fieldName}}</td>
+                <td>
+                    <input type="text" placeholder="字段描述" nz-input [(ngModel)]="data.alias">
+                </td>
+                <td>{{data.fieldType}}</td>
+
+
+
+
+                <td><input type="text" nz-input [(ngModel)]="data.presetValue"> </td>
+                <td>
+                    <nz-input-number [(ngModel)]="data.displayWidth" [nzMin]="50" [nzStep]="20" [nzMax]="1000"></nz-input-number>
+                </td>
+                <td>
+                    <nz-switch [(ngModel)]="data.isUpdate"></nz-switch>
+                </td>
+                <td>
+                    <nz-switch [(ngModel)]="data.isShow"></nz-switch>
+                </td>
+                <td>
+                    <nz-switch [(ngModel)]="data.isQuery"></nz-switch>
+                </td>
+                <td>
+                    <div style="float: left;">
+                        {{data.recno}}
+                    </div>
+                    <div style="display: flex;flex-direction: column;align-items: center;margin-left: 20px;">
+                        <i class="anticon anticon-up" (click)="recnoUp(data)" style="cursor: pointer"></i>
+                        <i class="anticon anticon-down" (click)="recnoDown(data)" style="cursor: pointer"></i>
+                    </div>
+
+
+
+
+                </td>
+
+                <td> <button (click)="state=View.EditMetaFieldType ;editField(data)" nz-button nzType='primary' nz-tooltip nzTitle="{{data.config | json}}">编辑</button></td>
+            </tr>
+        </tbody>
+    </nz-table>
+
+</ng-container>
+
+<hr>
+<div *ngIf="state==View.EditMetaFieldType || state==View.SelectMetaFieldType ">
+    <h4>附加参数</h4>
+    <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+        <ng-container>
+            <nz-form-item *ngFor="let control of controlArray;let i=index">
+                <nz-form-label [nzXs]="24 " [nzSm]="4 " [nzFor]="control.controlInstance ">{{control.controlInstance}}</nz-form-label>
+                <nz-form-control [nzXs]="24 " [nzSm]="20 ">
+                    <input nz-input style="width: 60%; margin-right:8px; " [placeholder]="control.tooltip" [attr.id]="control.id " [formControlName]="control.controlInstance " nz-tooltip [nzTitle]="control.tooltip">
+                    <i class="anticon anticon-minus-circle-o dynamic-delete-button " (click)="removeField(control,$event) "></i>
+                </nz-form-control>
+
+
+
+            </nz-form-item>
+        </ng-container>
+        <nz-form-item>
+            <a nz-button nzType="dashed" style="width:60% " (click)="state=View.SelectMetaFieldType "><i class="anticon anticon-plus "></i>添加键</a>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-control [nzXs]="{span:24,offset:0} " [nzSm]="{span:20,offset:4} ">
+                <button nz-button nzType="primary" (click)="updateField() ">确定</button>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+    <hr>
+</div>
+<nz-modal [nzVisible]="state==View.SelectMetaFieldType " nzTitle="选取键类型 " (nzOnCancel)="state=View.List " (nzOnOk)="state=View.EditMetaFieldType;addField() ">
+    <nz-select style="width: 200px; " nzShowSearch nzAllowClear nzPlaceHolder="选择附加参数名 " [(ngModel)]="selectedType ">
+        <nz-option [nzLabel]="option.label " [nzValue]="option.value " *ngFor="let option of defaultOptions" (click)="selectedTooltip=option.tooltip"></nz-option>
+    </nz-select>
+</nz-modal>

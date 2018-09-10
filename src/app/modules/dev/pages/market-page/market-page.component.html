@@ -1,0 +1,151 @@
+<div class="container">
+    <nz-breadcrumb style="margin:12px 0;">
+        <nz-breadcrumb-item>
+            <a> 开发者</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+            <a> 市场管理</a>
+        </nz-breadcrumb-item>
+    </nz-breadcrumb>
+</div>
+
+
+<div class="container bg-gray" *ngIf="state==ViewState.List">
+    <div style="background:#fff;padding:15px;padding-top:50px;">
+        <button nz-button nzType='primary' style="margin-right:50px;" (click)="state=ViewState.Create">+添加市场</button>
+        <!-- <button nz-button nzType='danger' (click)="deleteArticleCategorys()">删除选中</button> -->
+        <!-- <nz-alert style="margin:40px auto" nzType="info" [nzMessage]="'已选择 4 项   涉及人员 20人 清空 '" nzShowIcon></nz-alert> -->
+        <nz-table #ajaxTable [nzData]="markets" [nzShowPagination]="false" [nzLoading]="loading">
+            <thead nzSingleSort>
+                <tr>
+                    <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+
+                    <th nzShowSort nzShowFilter>ID</th>
+                    <th nzShowFilter>集团名称
+                    </th>
+                    <th nzShowSort nzSortKey="email">
+                        <span>集团座机</span>
+                    </th>
+                    <th>
+                        省市区
+                    </th>
+
+                    <th>
+                        创建时间
+                    </th>
+
+                    <th>上次更新时间
+                    </th>
+
+                    <th>操作</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of ajaxTable.data">
+                    <td nzShowCheckbox [(nzChecked)]="data.checked"></td>
+                    <td>{{data.mktId}}</td>
+                    <td>{{data.mktName }}</td>
+                    <td>{{data.telephone }}</td>
+
+                    <td>{{data.province }} {{data.city }} {{data.area }}</td>
+
+                    <td>{{data.createdAt|date:'yyyy-mm-dd'}}</td>
+
+                    <td>{{data.updateAt | date:'yyyy-mm-dd'}}</td>
+                    <td>
+                        <nz-popconfirm nzTitle="确定删除市场" nzOkText="确定删除" nzCancelText="取消" (nzOnConfirm)="deleteMarket(data)">
+                            <a nz-popconfirm>删除</a>
+                        </nz-popconfirm>
+                        <button nz-button nzType='primary' (click)="selectMarket(data);state=ViewState.Update; ">修改</button>
+                    </td>
+                </tr>
+            </tbody>
+
+        </nz-table>
+        <nz-pagination [nzPageIndex]="pageIndex" [nzTotal]="total" nzShowSizeChanger [nzPageSize]="10" style="text-align:right;margin-top: 40px;"></nz-pagination>
+    </div>
+</div>
+
+<!-- 创建市场 -->
+<nz-modal [(nzVisible)]="ViewState.Create==state" [nzWidth]="800" nzTitle="添加市场" (nzOnCancel)="state=ViewState.List" (nzOnOk)="createMarket()">
+    <div>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>市场名称
+
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input nz-input [(ngModel)]="newMarket.mktName">
+
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>市场座机
+
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input nz-input [(ngModel)]="newMarket.telephone">
+
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="ant-row ant-form-item">
+            <label class="ant-form-item-required ant-col-xs-24 ant-col-sm-6 ant-form-item-label">省市区：</label>
+
+
+            <nz-form-control class="ant-col-xs-24 ant-col-sm-14 ant-form-item-control-wrapper">
+                <div class="ant-form-item-control optiona">
+                    <nz-cascader [nzOptions]="options" [(ngModel)]="values" [nzPlaceHolder]="'请选择地址'">
+                    </nz-cascader>
+                    <!-- <a href="javascript:;" (click)="changeNzOptions()" class="change-options">
+              Change Options
+            </a> -->
+                    <!---->
+                </div>
+            </nz-form-control>
+        </nz-form-item>
+
+
+
+    </div>
+</nz-modal>
+
+
+<!-- 审核栏目 -->
+<nz-modal [(nzVisible)]="ViewState.Update==state" [nzWidth]="800" nzTitle="修改栏目" (nzOnCancel)="state=ViewState.List" (nzOnOk)="state=ViewState.List;updateMarket()">
+    <ng-container *ngIf="selectedMarket">
+        <div nz-form>
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>公司名称
+
+                </nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input [(ngModel)]="selectedMarket.mktName">
+
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>市场座机
+
+                </nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input [(ngModel)]="selectedMarket.telephone">
+
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item class="ant-row ant-form-item">
+                <label class="ant-form-item-required ant-col-xs-24 ant-col-sm-6 ant-form-item-label">省市区：</label>
+
+
+                <nz-form-control class="ant-col-xs-24 ant-col-sm-14 ant-form-item-control-wrapper">
+                    <div class="ant-form-item-control optiona">
+                        <nz-cascader [nzOptions]="options" [(ngModel)]="values" [nzPlaceHolder]="'请选择地址'">
+                        </nz-cascader>
+
+                    </div>
+                </nz-form-control>
+            </nz-form-item>
+
+        </div>
+    </ng-container>
+</nz-modal>

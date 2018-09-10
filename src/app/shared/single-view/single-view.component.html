@@ -1,0 +1,46 @@
+<ng-container *ngIf="metaObject&&metaFields">
+    <h1>{{metaObject.tableName}}</h1>
+    <div>
+        <ng-container *ngIf="config.queryAttributes.length>0">
+            <app-query-attr-toolbar [showSearchButton]="false" [queryAttributes]="config.queryAttributes" #attrToolbar></app-query-attr-toolbar>
+            <app-query-toolbar [showSearchButton]="false" [queryFields]="queryFields" #queryToolbar> </app-query-toolbar>
+
+        </ng-container>
+    </div>
+    <div>
+    </div>
+    <button nz-button (click)="query()">搜索</button>
+    <!-- <nz-modal [nzVisible]="visible" [nzWidth]="'1000px'" (nzOnCancel)="cancel()" (nzOnOk)="submit()"> -->
+    <nz-table #basicTable style="overflow: scroll">
+        <thead>
+            <tr>
+                <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+                <th *ngFor="let field of metaFields" [nzWidth]="field.displayWidth?field.displayWidth+'px':'100px'">{{field.alias || field.fieldName}}</th>
+                <th [nzWidth]="'300px'" *ngIf="metaObject.isCelledit">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of list">
+                <td nzShowCheckbox [(nzChecked)]="data.checked" [nzDisabled]="data.disabled" (nzCheckedChange)="refreshStatus($event)"></td>
+                <td *ngFor="let field of metaFields">
+                    <app-field [field]="field" [value]="data[field.fieldName]"></app-field>
+                </td>
+                <td *ngIf="metaObject">
+                    <button nz-button nzType="primary" (click)="edit(data)" *ngIf="metaObject.isCelledit">编辑</button>
+                    <!-- <button nz-button nzType="danger" nz-popconfirm nzTitle="确认删除数据?" (nzOnConfirm)="deleteData(data)" (nzOnCancel)="cancel()" (click)="edit(data)" *ngIf="metaObject.is">删除</button> -->
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+
+    <!-- </nz-modal> -->
+
+
+
+    <!-- 更新模态框 -->
+    <nz-modal [nzVisible]="View.Update==state" [nzWidth]="'800px'" [nzTitle]="'更新'" (nzOnCancel)="state=View.List" (nzOnOk)="state=View.List;update()">
+        <ng-container *ngIf="selectedData">
+            <app-field [mode]="'update'" *ngFor="let field of updateFields;let i= index" [field]="field" [(value)]="selectedData[field.fieldName]"></app-field>
+        </ng-container>
+    </nz-modal>
+</ng-container>

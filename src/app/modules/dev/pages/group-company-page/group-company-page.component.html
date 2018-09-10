@@ -1,0 +1,89 @@
+<div class="container bg-gray" *ngIf="state==ViewState.List">
+    <div style="background:#fff;padding:15px;padding-top:50px;">
+        <button nz-button nzType='primary' style="margin-right:50px;" (click)="state=ViewState.Create">+添加市场</button>
+        <div style="margin: 20px 0;">
+            <nz-table #ajaxTable [nzData]="groupCompanys" [nzShowPagination]="false" [nzLoading]="loading">
+                <thead nzSingleSort>
+                    <tr>
+                        <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+
+                        <th nzShowSort nzShowFilter>ID</th>
+                        <th nzShowFilter>市场名称
+                        </th>
+
+                        <!-- <th>
+                        创建时间
+                    </th>
+                    <th>上次更新时间
+                    </th> -->
+
+                        <th>操作</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of ajaxTable.data">
+                        <td nzShowCheckbox [(nzChecked)]="data.checked"></td>
+                        <td>{{data.mktId}}</td>
+                        <td>{{data.mktName }}</td>
+                        <!-- <td>{{data.createdAt|date:'yyyy-mm-dd'}}</td>
+
+                    <td>{{data.updatedAt | date:'yyyy-mm-dd'}}</td> -->
+                        <td>
+                            <button nz-button nzType='danger' *ngIf="data.status==MarketStatus.Active" (click)="marketDisabled(data)">禁用 </button>
+                            <button nz-button nzType='primary' *ngIf="data.status==MarketStatus.Disabled" (click)="marketActive(data)">启用</button>
+
+                            <button nz-button nzType='primary' (click)="state=ViewState.Update;selectedMarket=data">编辑</button>
+
+                            <button nz-button nzType='primary' [routerLink]="'/admin/dev/market/'+data.mktId+'/org'">管理</button>
+
+
+                            <!-- <button nz-button nzType='danger'> -->
+                            <nz-popconfirm nzTitle="确定删除市场" nzOkText="确定删除" nzCancelText="取消" (nzOnConfirm)="deleteCompanyGroup(data)">
+                                <a nz-popconfirm>删除</a>
+                            </nz-popconfirm>
+
+                            <!-- </button>
+                         -->
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+        <div style="width: 90%;">
+            <nz-pagination [nzPageIndex]="pageIndex" [nzTotal]="total" nzShowSizeChanger [nzPageSize]="10" style="text-align:center;margin-top: 40px;"></nz-pagination>
+        </div>
+    </div>
+</div>
+
+<!-- 审核文章 -->
+<nz-modal [(nzVisible)]="ViewState.Create==state" [nzWidth]="800" nzTitle="添加集团" (nzOnCancel)="state=ViewState.List" (nzOnOk)="marketCreate()">
+    <div nz-form>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>公司名称
+
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input nz-input [(ngModel)]="newMarket.mktName">
+
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+</nz-modal>
+
+
+<!-- 审核栏目 -->
+<nz-modal [(nzVisible)]="ViewState.Update==state" [nzWidth]="800" nzTitle="修改市场" (nzOnCancel)="state=ViewState.List" (nzOnOk)="state=ViewState.List;marketUpdate()">
+    <ng-container *ngIf="selectedMarket">
+        <div nz-form>
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>公司名称
+
+                </nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <input nz-input [(ngModel)]="selectedMarket.mktName">
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </ng-container>
+</nz-modal>

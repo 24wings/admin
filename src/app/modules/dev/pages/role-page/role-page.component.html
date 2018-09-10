@@ -1,0 +1,147 @@
+<app-market-main-nav></app-market-main-nav>
+<button nz-button nzType="primary" (click)="state=View.CreateRole" class="mr-small">新增角色</button>
+
+<nz-table #basicTable [nzData]="roles">
+    <thead>
+        <tr>
+            <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+            <th>角色名</th>
+            <th>权限列表</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of roles">
+            <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="refreshStatus($event)"></td>
+            <td>{{data.roleName}}</td>
+            <td>
+                <span *ngFor="let menu of data.menus">
+                    <span *ngIf="menu"> {{menu.text}},</span>
+                </span>
+            </td>
+            <td>
+                <a nz-button nzType="primary" (click)="selectedRole=data; state=View.EditRole">修改</a>
+
+                <a nz-button nzType="primary" (click)="selectedRole=data; state=View.empRole;empList()">角色赋权</a>
+                <!-- <a nz-button nzType="primary" (click)="selectedRole=data; state=View.empdelete;empRoleList()">取消赋权</a> -->
+                <a nz-button nz-popconfirm nzTitle="确认删除吗?" nzOkText="确认" nzCancelText="取消" (nzOnConfirm)="roleDelete(data.roleId)">删除</a>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+
+<nz-modal [nzVisible]="state==View.CreateRole" [nzWidth]="800" nzTitle="创建角色" (nzOnCancel)="state=View.ListRole" (nzOnOk)="state=View.ListRole;createRole()">
+    <ng-container *ngIf="newRole">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">角色名称</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="newRole.roleName">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">角色代码</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="newRole.roleCode">
+            </nz-form-control>
+        </nz-form-item>
+        <div class="container">
+
+            <nz-form-item>
+                <nz-form-label [nzSpan]="6">角色权限</nz-form-label>
+            </nz-form-item>
+            <nz-tree [(ngModel)]="nodes" [nzCheckable]="true" [nzMultiple]="true" (nzClick)="mouseAction('click',$event)" (nzCheckBoxChange)="mouseAction('check',$event)"
+                (nzDblClick)="mouseAction('dblclick', $event)">
+            </nz-tree>
+
+        </div>
+    </ng-container>
+</nz-modal>
+
+<nz-modal [nzVisible]="state==View.EditRole" [nzWidth]="800" nzTitle="更新角色" (nzOnCancel)="state=View.ListRole" (nzOnOk)="state=View.ListRole;roleUpdate()">
+    <ng-container *ngIf="selectedRole">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">角色名称</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="selectedRole.roleName">
+            </nz-form-control>
+        </nz-form-item>
+
+        <div class="container">
+
+            <nz-form-item>
+                <nz-form-label [nzSpan]="6">角色权限</nz-form-label>
+            </nz-form-item>
+            <nz-tree [(ngModel)]="nodes" [nzCheckable]="true" [nzMultiple]="true" (nzClick)="mouseAction('click',$event)" (nzCheckBoxChange)="mouseAction('check',$event)"
+                (nzDblClick)="mouseAction('dblclick', $event)">
+            </nz-tree>
+
+        </div>
+    </ng-container>
+</nz-modal>
+
+
+
+
+<nz-modal [nzVisible]="state==View.empRole" [nzWidth]="800" nzTitle="角色赋权" (nzOnCancel)="state=View.ListRole" (nzOnOk)="state=View.ListRole;empRole()">
+    <ng-container *ngIf="selectedRole">
+        <!-- <nz-form-item *ngFor="let org of orgNodes ">
+            <nz-form-label [nzSpan]="6">组织名称</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="org.title">
+            </nz-form-control>
+        </nz-form-item> -->
+
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">角色名称</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="selectedRole.roleName">
+            </nz-form-control>
+        </nz-form-item>
+
+        <div class="container">
+
+            <nz-form-item>
+                <nz-form-label [nzSpan]="6">员工列表</nz-form-label>
+            </nz-form-item>
+
+            <div *ngFor="let emp of emps" class="menu-group">
+                <div style="border-bottom: 1px solid rgb(233, 233, 233);">
+                    <label nz-checkbox [(ngModel)]="emp.checked">
+                        {{emp.name}}
+                    </label>
+                </div>
+
+
+
+            </div>
+        </div>
+    </ng-container>
+</nz-modal>
+
+<!-- <nz-modal [nzVisible]="state==View.empdelete" [nzWidth]="800" nzTitle="取消赋权" (nzOnCancel)="state=View.ListRole" (nzOnOk)="state=View.ListRole;empdelete()">
+    <ng-container *ngIf="selectedRole">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">角色名称</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="selectedRole.roleName">
+            </nz-form-control>
+        </nz-form-item>
+
+        <div class="container">
+
+            <nz-form-item>
+                <nz-form-label [nzSpan]="6">员工列表</nz-form-label>
+            </nz-form-item>
+
+            <div *ngFor="let emp of emps" class="menu-group">
+                <div style="border-bottom: 1px solid rgb(233, 233, 233);">
+                    <label nz-checkbox [(ngModel)]="emp.checked">
+                        {{emp.epName}}
+                      </label>
+                </div>
+
+
+            </div>
+        </div>
+    </ng-container>
+</nz-modal> -->

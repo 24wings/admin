@@ -1,0 +1,43 @@
+.customerDiv{
+   margin-bottom: 40px;
+}
+.customerDiv p{
+    margin-left: 30px;
+}
+
+form {
+    width: 90%;
+    max-width: 45em;
+    margin: auto;
+  }
+
+.showerr {
+    white-space: pre-wrap;
+}
+
+.middleDiv{
+    width: 60%;
+    margin: 0 auto;
+}
+
+.middleDiv h1{
+    text-align: center;
+}
+
+.middleDiv p{
+    margin-left: 60px;
+}
+
+.customerDiv div{
+    margin-left: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+:host {
+    display: flex;
+    flex-direction: column;
+    padding-top: 24px;
+  }
+  
+ 

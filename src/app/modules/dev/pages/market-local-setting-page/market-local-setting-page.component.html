@@ -1,0 +1,97 @@
+<app-market-main-nav></app-market-main-nav>
+
+
+<button nz-button nzType="primary" (click)="state=View.CreateParam">添加本地参数</button>
+<nz-table #basicTable [nzData]="dataSet">
+    <thead>
+        <tr>
+            <th>键名</th>
+            <th>Key</th>
+            <th>值</th>
+            <th>默认值</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of dataSet">
+            <td>{{data.paramName}}</td>
+            <td>{{data.paramKey}}</td>
+            <td>{{data.paramValue}}</td>
+            <td>{{data.defaultValue}}</td>
+            <td>
+                <button nz-button nzType="primary" (click)="selectedParam=data;state=View.EditParam">编辑</button>
+                <button nz-button nzType="danger" nz-popconfirm nzTitle="确认删除吗?" nzOkText="确认" nzCancelText="取消" (nzOnConfirm)="deleteParam(data)">删除</button>
+                <!-- <a>Action 一 {{data.name}}</a> -->
+                <!-- <nz-divider nzType="vertical"></nz-divider> -->
+                <!-- <a>Delete</a> -->
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+<nz-modal [nzVisible]="state==View.CreateParam" (nzOnCancel)="state=View.ListParams;" (nzOnOk)="state=View.ListParams;golbalParamCreate();">
+
+    <nz-form-item>
+        <nz-form-label nzfor="email">参数名</nz-form-label>
+        <nz-form-control><input nz-input [(ngModel)]="newParam.paramName" type="text"></nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label nzfor="email">键名</nz-form-label>
+        <nz-form-control><input nz-input [(ngModel)]="newParam.paramKey" type="text"></nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label nzfor="email">键值</nz-form-label>
+        <nz-form-control><input nz-input [(ngModel)]="newParam.paramValue" type="text"></nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label nzfor="email">默认值</nz-form-label>
+        <nz-form-control><input nz-input [(ngModel)]="newParam.defaultValue"></nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label nzfor="email">数据类型</nz-form-label>
+        <nz-form-control>
+            <nz-select style="width: 120px;" [(ngModel)]="newParam.type" nzAllowClear nzPlaceHolder="参数类型">
+                <nz-option [nzValue]="ParamType.Text" nzLabel="文本框"></nz-option>
+            </nz-select>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+
+    </nz-form-item>
+
+
+
+</nz-modal>
+
+<nz-modal [nzVisible]="state==View.EditParam" (nzOnCancel)="state=View.ListParams;" (nzOnOk)="state=View.ListParams;paramUpdate();">
+    <ng-container *ngIf="selectedParam">
+        <nz-form-item>
+            <nz-form-label nzfor="email">参数名</nz-form-label>
+            <nz-form-control><input nz-input [(ngModel)]="selectedParam.paramName" type="text"></nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nzfor="email">键名</nz-form-label>
+            <nz-form-control><input nz-input [(ngModel)]="selectedParam.paramKey" type="text"></nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nzfor="email">键值</nz-form-label>
+            <nz-form-control><input nz-input [(ngModel)]="selectedParam.paramValue" type="text"></nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nzfor="email">默认值</nz-form-label>
+            <nz-form-control><input nz-input [(ngModel)]="selectedParam.defaultValue"></nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nzfor="email">数据类型</nz-form-label>
+            <nz-form-control>
+                <nz-select style="width: 120px;" [(ngModel)]="selectedParam.type" nzAllowClear nzPlaceHolder="参数类型">
+                    <nz-option [nzValue]="ParamType.Text" nzLabel="文本框"></nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+
+        </nz-form-item>
+
+    </ng-container>
+
+</nz-modal>

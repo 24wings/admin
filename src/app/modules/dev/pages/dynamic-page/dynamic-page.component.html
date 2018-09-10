@@ -1,0 +1,22 @@
+<!-- <h1>动态视图页面</h1> -->
+<!-- <div *ngIf="menu"> -->
+<!-- <h4>基本信息</h4> -->
+<!-- <h2>{{menu.text}}</h2> -->
+<!-- <h3>{{menu.menuCode}}</h3> -->
+
+<!-- </div> -->
+
+<!-- {{config | json}} -->
+<h1>{{config?.pageName}}</h1>
+<ng-container *ngIf="config">
+    <!--单视图  -->
+    <ng-container *ngIf="config.viewType==ViewType.Single">
+        <!-- <h1>单视图</h1> -->
+        <app-single-view [singleConfig]="config.singleConfig"></app-single-view>
+    </ng-container>
+    <!-- 关系视图 -->
+    <ng-container *ngIf="config.viewType==ViewType.Relation">
+        <!-- <h1>关系视图</h1> -->
+        <app-relation-view [relationConfig]="config.relationConfig"></app-relation-view>
+    </ng-container>
+</ng-container>

@@ -1,0 +1,124 @@
+<ng-container *ngIf="state==View.mList">
+
+  <button nz-button nzType="primary" (click)="state=View.mCreat">+新增规则</button>
+  <nz-table #basicTable [nzData]="transFeeRules" [nzPageIndex]="page" [nzPageSize]="pageSize" [nzTotal]="count" [nzShowPagination]="true">
+    <thead>
+      <tr>
+        <th>交易区</th>
+        <th>交易金额收费率(‰)</th>
+        <th>交易重量收费率</th>
+        <th>固定费用</th>
+        <th>买卖标志</th>
+        <th>手续费下限</th>
+        <th>手续费上限</th>
+        <th>创建时间</th>
+        <th>状态</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let transFeeRule of transFeeRules">
+        <td>{{transFeeRule.txnId}}</td>
+        <td>{{transFeeRule.feeRateAmt}}</td>
+        <td>{{transFeeRule.feeRateWgt}}</td>
+        <td>{{transFeeRule.feeFixed}}</td>
+        <td>
+          <span [ngSwitch]="transFeeRule.io">
+            <div *ngSwitchCase="-1">
+              买方
+            </div>
+            <div *ngSwitchCase="1">
+              卖方
+            </div>
+          </span>
+        </td>
+        <td>{{transFeeRule.feeMin}}</td>
+        <td>{{transFeeRule.feeMax}}</td>
+        <td>{{transFeeRule.createTime|date:'yyyy-MM-dd'}}</td>
+        <td>
+          <ng-container *ngIf="transFeeRule.enabled">
+            启用
+          </ng-container>
+          <ng-container *ngIf="!transFeeRule.enabled">
+            禁用
+          </ng-container>
+        </td>
+        <td>
+          <ng-container *ngIf="transFeeRule.enabled">
+            <button nz-button nzType="primary" (click)="updateStatus(transFeeRule.id,false)">禁用</button>
+          </ng-container>
+          <ng-container *ngIf="!transFeeRule.enabled">
+            <button nz-button nzType="primary" (click)="updateStatus(transFeeRule.id,true)">启用</button>
+          </ng-container>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+
+
+</ng-container>
+
+
+<div *ngIf="View.mCreat==state">
+  <div style="height: 20px;"></div>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>交易区</nz-form-label>
+    <nz-form-control>
+      <nz-select style="width: 200px;" #select nzPlaceHolder="请选择交易区" [(ngModel)]="transFeeRule.txnId">
+        <nz-option *ngFor="let  txn of transAreas" [nzValue]="txn.txnId" [nzLabel]="txn.txnName"></nz-option>
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>收支科目</nz-form-label>
+    <nz-form-control>
+      <nz-select style="width: 200px;" #select nzPlaceHolder="会员类型" [(ngModel)]="transFeeRule.subjectId">
+        <nz-option *ngFor="let  subject of recPaySubjects" [nzValue]="subject.subjectId" [nzLabel]="subject.subjectName"></nz-option>
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>交易金额收费率(‰)</nz-form-label>
+    <nz-form-control [nzSpan]="6" nzHasFeedback>
+      <input nz-input placeholder="请设置交易金额收费率" type="number" [(ngModel)]="transFeeRule.feeRateAmt">
+
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>交易重量收费率</nz-form-label>
+    <nz-form-control [nzSpan]="6" nzHasFeedback>
+      <input nz-input placeholder="请设置交易重量收费率" type="number" [(ngModel)]="transFeeRule.feeRateWgt">
+
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>手续费下限</nz-form-label>
+    <nz-form-control [nzSpan]="6" nzHasFeedback>
+      <input nz-input placeholder="请设置手续费下限" type="number" [(ngModel)]="transFeeRule.feeMin">
+
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>手续费上限</nz-form-label>
+    <nz-form-control [nzSpan]="6" nzHasFeedback>
+      <input nz-input placeholder="请设置手续费上限" type="number" [(ngModel)]="transFeeRule.feeMax">
+
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSpan]="7" nzRequired>买卖标志</nz-form-label>
+    <nz-form-control [nzSpan]="6" nzHasFeedback>
+      <nz-select style="width: 200px;" [(ngModel)]="transFeeRule.io">
+        <nz-option nzValue="1" nzLabel="买方"></nz-option>
+        <nz-option nzValue="-1" nzLabel="卖方"></nz-option>
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-control [nzXs]="{span:12,offset:7}" [nzSm]="{span:12,offset:7}">
+      <button nz-button nzType="default" (click)="state=View.mList">取消</button>
+      <button nz-button nzType="primary" (click)="state=View.mList;saveTransFeeRule();">确定</button>
+    </nz-form-control>
+  </nz-form-item>
+</div>

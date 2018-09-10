@@ -1,0 +1,16 @@
+<nz-modal [nzVisible]="visible" [nzTitle]="title" [nzWidth]="1000" (nzOnCancel)="visible=false" (nzOnOk)="onOk()">
+    <nz-table #rowSelectionTable [nzData]="data">
+        <thead>
+            <tr>
+                <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+                <th *ngFor="let field of filterShow(meta.metaFields)">{{field.alias}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of rowSelectionTable.data">
+                <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="check(data)"></td>
+                <td *ngFor="let field of filterShow(meta.metaFields)">{{data[field.fieldName]}}</td>
+            </tr>
+        </tbody>
+    </nz-table>
+</nz-modal>

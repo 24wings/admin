@@ -1,0 +1,161 @@
+<div style="display:flex;justify-content: center;padding-top:40px;">
+    <button nz-button [nzType]="menuView==MenuViews.Market?'primary':'default'" (click)="menuView=MenuViews.Market;getMenuList()">市场菜单</button>
+    <button nz-button [nzType]="menuView==MenuViews.Develop?'primary':'default'" (click)="menuView=MenuViews.Develop;getMenuList()">开发人员菜单</button>
+</div>
+
+<div style="margin-top: 40px;">
+    <button nz-button (click)="state=ViewState.Create">添加菜单</button>
+
+    <nz-tree [(ngModel)]="nodes" [nzCheckable]="true" [nzMultiple]="true" [nzDefaultExpandAll]="expandDefault" (nzClick)="mouseAction('click',$event)"
+        (nzDblClick)="mouseAction('dblclick', $event)">
+    </nz-tree>
+</div>
+
+
+
+<nz-modal [(nzVisible)]="ViewState.Create==state" nzTitle="添加菜单" (nzOnCancel)="state=ViewState.List" (nzOnOk)="state=ViewState.List;createMenu()">
+    <div>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">菜单名</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="newMenu.text">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">上级菜单</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <!-- <nz-select style="width: 120px;" [(ngModel)]="newMenu.parentId" nzAllowClear nzPlaceHolder="Choose">
+                    <nz-option nzValue="" nzLabel="顶级菜单"></nz-option>
+                    <nz-option [nzValue]="parentMenu.menuId" [nzLabel]="parentMenu.text" *ngFor="let parentMenu of  optionParentMenus"></nz-option>
+                </nz-select> -->
+                <nz-tree-select style="width: 250px" [nzNodes]="nodes" nzPlaceHolder="请选择上级菜单" [(ngModel)]="newMenu.parentId" (ngModelChange)="onChange()">
+                </nz-tree-select>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">菜单链接</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="newMenu.link">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">菜单编码</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="newMenu.menuCode">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">菜单图标</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="newMenu.icon">
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">配置数据</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <textarea nz-input [(ngModel)]="newMenu.config" style="height: 300px;"></textarea>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">是否外链</nz-form-label>
+            <nz-switch [(ngModel)]="isExteralLink" nzCheckedChildren="外链" nzUnCheckedChildren="内部模块"></nz-switch>
+        </nz-form-item>
+        <nz-form-item *ngIf="isExteralLink">
+            <nz-form-label [nzSpan]="6">外链打开类型</nz-form-label>
+            <nz-select style="width: 120px;" [(ngModel)]="newMenu.menuType" nzAllowClear nzPlaceHolder="打开页面方式">
+                <nz-option [nzValue]="option.value" [nzLabel]="option.label" *ngFor="let option of externalOpenOptions"></nz-option>
+            </nz-select>
+        </nz-form-item>
+
+
+    </div>
+
+</nz-modal>
+
+
+
+<nz-modal [(nzVisible)]="ViewState.EditGroup==state" nzTitle="更新菜单组" (nzOnCancel)="state=ViewState.List" (nzOnOk)="state=ViewState.List;updateGroup()">
+    <div *ngIf="selectedGroup">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">菜单名</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="selectedGroup.text">
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">菜单图标</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="selectedGroup.icon">
+            </nz-form-control>
+        </nz-form-item>
+        <!--   -->
+        <button nz-button nzType="danger" nz-popconfirm nzTitle="确认删除吗？" nzOkText="确定" nzCancelText="取消" (nzOnConfirm)="state=ViewState.List;deleteMenu(selectedGroup.menuId)"
+            (nzOnCancel)="cancel()">删除菜单</button>
+    </div>
+
+</nz-modal>
+
+
+<nz-modal [(nzVisible)]="ViewState.EditMenu==state" nzTitle="更新菜单" (nzOnCancel)="state=ViewState.List" (nzOnOk)="state=ViewState.List;updateMenu()">
+    <div *ngIf="selectedMenu">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">菜单名</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="selectedMenu.text">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">上级菜单</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <!-- <nz-select style="width: 120px;" [(ngModel)]="selectedMenu.parentId" nzAllowClear nzPlaceHolder="Choose">
+                    <nz-option [nzValue]="0" nzLabel="顶级菜单"></nz-option>
+                    <nz-option [nzValue]="parentMenu.menuId" [nzLabel]="parentMenu.text" *ngFor="let parentMenu of  optionParentMenus"></nz-option>
+                </nz-select> -->
+                <nz-tree-select style="width: 250px" [nzNodes]="nodes" nzPlaceHolder="请选择上级菜单" [(ngModel)]="selectedMenu.parentId" (ngModelChange)="onChange($event)">
+                </nz-tree-select>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">菜单链接</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="selectedMenu.link">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">菜单编码</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="selectedMenu.menuCode">
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">菜单图标</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input nz-input [(ngModel)]="selectedMenu.icon">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">配置数据</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <textarea nz-input [(ngModel)]="selectedMenu.config" style="height:300px ;"></textarea>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">是否外链</nz-form-label>
+            <nz-switch [(ngModel)]="isExteralLink" nzCheckedChildren="外链" nzUnCheckedChildren="内部模块"></nz-switch>
+        </nz-form-item>
+        <nz-form-item *ngIf="isExteralLink">
+            <nz-form-label [nzSpan]="6">外链打开类型</nz-form-label>
+            <nz-select style="width: 120px;" [(ngModel)]="selectedMenu.menuType" nzAllowClear nzPlaceHolder="打开页面方式">
+                <nz-option [nzValue]="option.value" [nzLabel]="option.label" *ngFor="let option of externalOpenOptions"></nz-option>
+            </nz-select>
+        </nz-form-item>
+    </div>
+    <button nz-button nzType="danger" nz-popconfirm nzTitle="确认删除吗？" nzOkText="确定" nzCancelText="取消" (nzOnConfirm)="state=ViewState.List;deleteMenu(selectedMenu.menuId)"
+        (nzOnCancel)="cancel()">删除菜单</button>
+
+
+</nz-modal>

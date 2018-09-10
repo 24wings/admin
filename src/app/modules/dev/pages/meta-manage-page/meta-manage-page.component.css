@@ -1,0 +1,21 @@
+.ant-collapse-content>.ant-collapse-content-box,
+.ant-card-body {
+    padding: 0!important;
+}
+
+.spl_col {
+    width: 100%;
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    padding: 10px 10px;
+    border-radius: 5px;
+}
+
+.spl_col:hover {
+    background: #e6f7ff
+}
+
+#a .ant-collapse-content-box {
+    padding: 0!important;
+}

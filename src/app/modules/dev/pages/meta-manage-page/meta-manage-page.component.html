@@ -1,0 +1,154 @@
+<div style="    padding-top: 10px;">
+    <button nz-button [routerLink]="['/admin/dev/meta-create']">新建查询</button>
+    <button nz-button (click)="metaObjectList()" nzType="primary">刷新</button>
+    <button nz-button (click)="exportExcel()">导出excel</button>
+</div>
+<div nz-row style="margin:10px 0">
+
+    <!-- <nz-form-control nz-col nzSpan="4">
+        <nz-input-group nzPrefixIcon="anticon anticon-user">
+            <input nz-input placeholder="查询方案">
+        </nz-input-group>
+    </nz-form-control> -->
+    <!-- <div nz-col nzSpan="6">
+        <nz-form-label nz-col nzSpan="8">选择查询分类</nz-form-label>
+
+
+        <nz-select nz-col nzSpan="10" [(ngModel)]="selectedValue" nzAllowClear nzPlaceHolder="全部">
+            <nz-option nzValue="全部" nzLabel="全部"></nz-option>
+            <nz-option nzValue="文字" nzLabel="文字"></nz-option>
+            <nz-option nzValue="查询名称" nzLabel="查询名称"></nz-option>
+            <nz-option nzValue="查询分类" nzLabel="查询分类"></nz-option>
+            <nz-option nzValue="更新表名" nzLabel="更新表名"></nz-option>
+            <nz-option nzValue="组件名称" nzLabel="组件名称"></nz-option>
+        </nz-select>
+
+    </div> -->
+
+    <!-- <div nz-col nzSpan="6">
+        <nz-form-label nz-col nzSpan="6">查询条件</nz-form-label>
+        <nz-form-control nz-col nzSpan="14">
+
+            <nz-input-group nzPrefixIcon="anticon anticon-search">
+                <input nz-input type="text" placeholder="查询条件">
+            </nz-input-group>
+        </nz-form-control>
+
+    </div> -->
+
+    <!-- 
+    <button nz-button nzType="primary">简单查询</button>
+    <button nz-button nzType="primary">高级查询</button>
+    <button nz-button (click)="exportExcel()">导出</button> -->
+    <!-- <nz-form-control nz-col nzSpan="4">
+        <nz-input-group nzPrefixIcon="anticon anticon-search">
+            <input nz-input type="password" placeholder="视图">
+        </nz-input-group>
+    </nz-form-control>
+
+
+    <nz-form-control nz-col nzSpan="4">
+        <nz-input-group nzPrefixIcon="anticon anticon-search">
+            <input nz-input type="password" placeholder="数据">
+        </nz-input-group>
+    </nz-form-control> -->
+
+</div>
+
+<div nz-row>
+
+    <div nz-col nzSpan="20">
+        <div nz-row style="background: #e3e4e4;
+        line-height: 30px;    padding-left: 15px;
+ ">
+            <div nz-col nzSpan="4" style="margin-bottom: none!important;">查询名称</div>
+            <div nz-col nzSpan="2" style="margin-bottom: none!important;">Code</div>
+            <div nz-col nzSpan="12" style="margin-bottom: none!important;">查询sql</div>
+            <div nz-col nzSpan="6" style="margin-bottom: none!important;">操作</div>
+        </div>
+        <nz-collapse id="a">
+            <nz-collapse-panel *ngFor="let group of menuGroups" [nzHeader]="group.groupName" [nzActive]="true" [nzDisabled]="false">
+
+                <div *ngFor="let data of group.metaObjects" style=" " nz-col nzSpan="20" class="spl_col">
+                    <div nz-dropdown nz-col nzSpan="4">
+
+                        {{data.tableName}}
+                    </div>
+                    <div nz-dropdown nz-col nzSpan="2">
+
+                        {{data.objectCode}}
+                    </div>
+                    <div nz-dropdown nz-col nzSpan="12">
+                        {{data.querySql}}
+                    </div>
+                    <div nz-col nzSpan="6">
+                        <!-- <button nz-button [routerLink]="['/admin/dev/meta/'+data.objectCode+'/detail']" nzType="primary">预览</button> -->
+                        <button nz-button [routerLink]="['/admin/dev/meta/'+data.objectCode+'/edit']" nzType="primary">编辑</button>
+                        <button nz-button nzType="danger" nz-popconfirm nzTitle="确认删除?" nzOkText="确认" nzCancelText="取消" (nzOnConfirm)="metaObjectDelete(data)">删除</button>
+                    </div>
+
+                </div>
+                <div style="clear: both;"></div>
+
+            </nz-collapse-panel>
+        </nz-collapse>
+
+
+
+    </div>
+
+</div>
+<!-- <div>
+
+    <div nz-form [nzLayout]="'inline'" style="text-align:center;">
+
+    </div>
+</div>
+
+<nz-table #rowSelectionTable (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageIndexChange)="refreshStatus()" (nzPageSizeChange)="refreshStatus()">
+    <thead>
+        <tr>
+            <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+            <th>编码</th>
+            <th>组名</th>
+            <th>视图</th>
+            <th>更新数据表</th>
+
+            <th>主键</th>
+            <th>sql</th>
+
+            <th>单选/多选</th>
+            <th>行内编辑</th>
+            <th>显示行号</th>
+
+            <th>是否初始加载</th>
+            <th>默认排序</th>
+            <th>过滤条件</th>
+            <th [nzWidth]="'300px'">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of metaObjects">
+            <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="refreshStatus($event)"></td>
+            <td>{{data.objectCode}}</td>
+            <td>{{data.groupName}}</td>
+            <td>{{data.objectName}}</td>
+            <td>{{data.tableName}}</td>
+
+            <td>{{data.pkKey}}</td>
+            <td>{{data.querySql}}</td>
+            <td>{{data.isSingle}}</td>
+            <td>{{data.isCelledit}}</td>
+            <td>{{data.isShowNum}}</td>
+
+            <td>{{data.isFirstLoad}}</td>
+            <td>{{data.defaultOrder}}</td>
+            <td>{{data.filter}}</td>
+            <td>
+                <button nz-button [routerLink]="['/admin/dev/meta/'+data.objectCode+'/detail']">预览</button>
+                <button nz-button [routerLink]="['/admin/dev/meta/'+data.objectCode+'/edit']">编辑</button>
+                <button nz-button nzType="danger" (click)="metaObjectDelete(data)">删除</button>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>ss -->

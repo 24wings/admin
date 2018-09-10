@@ -1,0 +1,18 @@
+<app-market-main-nav></app-market-main-nav>
+<!-- <div class="container">
+
+    <div *ngFor="let group of groups" class="menu-group">
+        <div style="border-bottom: 1px solid rgb(233, 233, 233);">
+            <label nz-checkbox [(ngModel)]="group.checked" (ngModelChange)="updateAllChecked(group)" [nzIndeterminate]="group.indeterminate">
+          {{group.text}}
+        </label>
+        </div>
+        <br>
+        <nz-checkbox-group [(ngModel)]="group.children" (ngModelChange)="updateSingleChecked(group)"></nz-checkbox-group>
+    </div>
+</div> -->
+<nz-tree [(ngModel)]="nodes" [nzDefaultCheckedKeys]="checkedKeys" [nzCheckable]="true" [nzMultiple]="true" (nzClick)="mouseAction('click',$event)" (nzCheckBoxChange)="mouseAction('check',$event)" (nzDblClick)="mouseAction('dblclick', $event)">
+</nz-tree>
+<div class="text-center">
+    <button nzType="default" nz-button> 还原</button> <button nz-button nzType="primary" (click)="updateGroupCompanyMenus()">更新</button>
+</div>

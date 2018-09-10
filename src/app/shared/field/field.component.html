@@ -1,0 +1,96 @@
+<!-- 显示模式 -->
+<div *ngIf="mode==View.Show">
+
+    <span [ngSwitch]="field.fieldType.toLowerCase()">
+    <p *ngSwitchCase="'datetime'">
+      {{value|date:field?.config?.dateFormat ||'yyyy-MM-dd'}}
+    </p> 
+    <p *ngSwitchCase="'timestamp'">
+        {{value|date:field?.config?.dateFormat ||'yyyy-MM-dd'}}
+      </p> 
+      
+    <p *ngSwitchCase="'tinyint'">
+      
+      <nz-switch [(ngModel)]="!!value" [nzDisabled]="true"></nz-switch>
+    </p>
+    <p *ngSwitchDefault>
+    {{value}} 
+    </p>
+    </span>
+</div>
+
+
+<!--更新模式-->
+<ng-container *ngIf="mode==View.Update">
+    <ng-container [ngSwitch]="field.fieldType.toLowerCase()">
+        <ng-container *ngSwitchCase="'int'">
+            <nz-form-item>
+                <nz-form-label [nzXs]="24 " [nzSm]="4 ">{{field.alias || field.fieldName}}:</nz-form-label>
+                <nz-form-control [nzXs]="24 " [nzSm]="20 ">
+                    <nz-input-number [(ngModel)]="value" [nzMin]="1"></nz-input-number>
+                </nz-form-control>
+            </nz-form-item>
+        </ng-container>
+        <ng-container *ngSwitchCase="'datetime'">
+            <nz-form-item>
+                <h1>datetime</h1>
+                <nz-form-label [nzXs]="24 " [nzSm]="4 ">{{field.alias || field.fieldName}}:</nz-form-label>
+                <nz-form-control [nzXs]="24 " [nzSm]="20 ">
+                    <nz-date-picker [(ngModel)]="value" (nzOnOk)="submitChange()" nzShowTime></nz-date-picker>
+                </nz-form-control>
+            </nz-form-item>
+        </ng-container>
+        <ng-container *ngSwitchCase="'timestamp'">
+            <nz-form-item>
+                <nz-form-label [nzXs]="24 " [nzSm]="4 ">{{field.alias || field.fieldName}}:</nz-form-label>
+                <nz-form-control [nzXs]="24 " [nzSm]="20 ">
+                    <nz-date-picker [(ngModel)]="value" (change)="submitChange()" nzShowTime></nz-date-picker>
+                </nz-form-control>
+            </nz-form-item>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+            <nz-form-item>
+                <nz-form-label [nzXs]="24 " [nzSm]="4 ">{{field.alias || field.fieldName}}:</nz-form-label>
+                <nz-form-control [nzXs]="24 " [nzSm]="20 ">
+                    <input nz-input style="width: 60%; margin-right:8px; " (change)="submitChange()" [placeholder]="field.alias || field.placeholder" [(ngModel)]="value">
+                </nz-form-control>
+            </nz-form-item>
+        </ng-container>
+    </ng-container>
+</ng-container>
+
+
+<!-- 查询条件 -->
+<ng-container *ngIf="mode==View.Query">
+
+    <span [ngSwitch]="field.fieldType.toLocaleLowerCase()">
+ 
+  <ng-container *ngSwitchCase="'datetime'">
+      <nz-dropdown>
+          <a nz-dropdown>
+            {{field.alias ||field.fieldName }}<i class="anticon anticon-down"></i>
+          </a>
+          <ul nz-menu nzSelectable>
+            <li nz-menu-item *ngFor="let condition of conditions" (click)="selectDateCondition(condition)">
+              <a>{{condition.label}}</a>
+            </li>
+          </ul>
+        </nz-dropdown>
+        <ng-container *ngIf="selectedDateCondition">
+       
+        <nz-date-picker [(ngModel)]="date"  nzShowTime *ngIf="selectedDateCondition.datePick=='single'" [nzFormat]="dateFormat"></nz-date-picker>
+        <nz-range-picker [(ngModel)]="dateRange" *ngIf="selectedDateCondition.datePick=='between'" nzShowTime [nzFormat]="dateFormat"></nz-range-picker>
+    </ng-container>
+  </ng-container>
+  <ng-container *ngSwitchDefault>
+      <label style="    height: 20px; text-align: center;vertical-align: middle;">{{field.alias || field.fieldName}}</label>
+      <nz-select [(ngModel)]="selectedCondition">
+          <nz-option [nzLabel]="condition.label" [nzValue]="condition.value" *ngFor="let condition of conditions"></nz-option>
+      </nz-select>
+      <input type="text" nz-input [(ngModel)]="value" style="width:50%;">
+
+    </ng-container>
+  </span>
+
+</ng-container>

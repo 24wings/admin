@@ -1,0 +1,200 @@
+<p>
+    代码生成器
+</p>
+
+
+
+
+
+
+<!-- 启用模式 -->
+<ng-container *ngIf="state==ViewState.ListCol">
+    <div>
+        <button nz-type="primary" nz-button (click)="state=ViewState.ImportJSON">JSON导入</button>
+        <button nz-button nzType="primary" (click)="state=ViewState.EditCol"><i class="anticon anticon-edit"></i>编辑</button>
+        <button (click)="state=ViewState.CodeGen" nzType="primary" nz-button>代码生成</button>
+    </div>
+    <div style="max-width:500px;margin-left:auto;margin-right:auto;">
+
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6" nzFor="email">表名</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input disabled type="text" nz-input [(ngModel)]="defaultTable.name">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6">备注</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <textarea disabled row="10" nz-input [(ngModel)]="defaultTable.comment"></textarea>
+            </nz-form-control>
+        </nz-form-item>
+
+    </div>
+
+    <nz-table #basicTable2 [nzData]="dataSet" [nzShowPagination]="false">
+        <thead>
+            <tr>
+                <th>Key</th>
+                <th>数据类型</th>
+                <th>长度</th>
+                <th>备注</th>
+                <th>主键</th>
+                <th>非空</th>
+                <th>自增长</th>
+                <!-- <th>操作</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of dataSet">
+                <td>{{data.key}}</td>
+                <td>{{data.type}}</td>
+                <td>{{data.length}}</td>
+                <td>{{data.comment}}</td>
+                <td> <i class="anticon anticon-check" *ngIf="data.PK"></i></td>
+                <td> <i class="anticon anticon-check" *ngIf="data.NN"></i></td>
+                <td> <i class="anticon anticon-check" *ngIf="data.AI"></i></td>
+                <!-- <td>
+                    <button nz-button nzType="primary" (click)="selectedCol=data">编辑</button>
+                    <button nz-button nzType="danger"> 移除 </button>
+                </td> -->
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-container>
+<!-- 编辑模式 -->
+<ng-container *ngIf="state==ViewState.EditCol">
+    <div>
+        <button nz-button (click)="state=ViewState.ListCol">预览</button>
+        <button (click)="addCol()" nz-button nzType="primary">添加字段</button>
+    </div>
+    <div style="max-width:500px;margin-left:auto;margin-right:auto;">
+
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6" nzFor="email">表名</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <input type="text" nz-input [(ngModel)]="defaultTable.name">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="6" nzFor="email">备注</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <textarea row="10" nz-input [(ngModel)]="defaultTable.comment"></textarea>
+            </nz-form-control>
+        </nz-form-item>
+
+    </div>
+    <nz-table #basicTable [nzData]="dataSet" [nzShowPagination]="false">
+        <thead>
+            <tr>
+                <th>Key</th>
+                <th>数据类型</th>
+                <th>长度</th>
+                <th>备注</th>
+                <th>主键</th>
+                <th>非空</th>
+                <th>自增长</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of dataSet">
+                <td><input type="text" [(ngModel)]="data.key" nz-input placeholder="键名"> </td>
+                <td>
+                    <nz-select style="width: 120px;" nzShowSearch [(ngModel)]="data.type" nzAllowClear nzPlaceHolder="数据类型">
+                        <nz-option [nzValue]="option.value" [nzLabel]="option.label" *ngFor="let option of colTypeOptions"></nz-option>
+                    </nz-select>
+                </td>
+                <td> <input type="number" [(ngModel)]="data.length" nz-input placeholder="数据长度"></td>
+                <td> <input type="text" [(ngModel)]="data.comment" nz-input placeholder="备注"></td>
+                <td><label nz-checkbox [(ngModel)]="data.PK">主键</label></td>
+                <td><label nz-checkbox [(ngModel)]="data.NN">非空</label> </td>
+                <td> <label nz-checkbox [(ngModel)]="data.AI">自增</label></td>
+                <td>
+                    <button nz-button nzType="primary" (click)="selectedCol=data">编辑</button>
+                    <button nz-button nzType="danger" (click)="removeCol(data)"> 移除 </button>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+
+</ng-container>
+
+
+
+
+
+
+
+<nz-modal [(nzVisible)]="ViewState.ImportJSON==state" nzTitle="数据导入" (nzOnCancel)="state=ViewState.ListCol" (nzOnOk)="trayParseJson()">
+    <label>将如下代码复制到eolinker 数据库表页面的控制台生成JSON格式</label>
+    <textarea name="" cols="30" rows="10"></textarea>
+
+
+    <textarea nz-input cols="30" rows="10" [(ngModel)]="json"></textarea>
+
+</nz-modal>
+
+
+<ng-container *ngIf="ViewState.CodeGen==state || ViewState.chooseCodeTemplate==state">
+    <button (click)="state=ViewState.ListCol" nz-button>返回</button>
+    <div nz-row>
+        <div nz-col nzSpan="12">
+            <h4>数据源</h4>
+            <textarea nz-input cols="30" rows="10" [(ngModel)]="json" (change)="compile()" (blur)="compile()"></textarea>
+        </div>
+        <div nz-col nzSpan="12">
+            <h4>模板代码 <button nz-button nzType="primary" (click)="state=ViewState.chooseCodeTemplate">选择模板</button></h4>
+            <textarea nz-input cols="30" rows="10" [(ngModel)]="templateStr" (change)="compile()" (blur)="compile()"></textarea>
+        </div>
+
+    </div>
+    <div nz-row>
+        <h4>生成代码</h4>
+        <div nz-col nzSpan="24">
+            <textarea nz-input cols="30" rows="30" [(ngModel)]="code"></textarea>
+        </div>
+    </div>
+
+
+</ng-container>
+
+<nz-modal [(nzVisible)]="ViewState.chooseCodeTemplate==state" nzTitle="选择生成模板" (nzOnCancel)="state=ViewState.CodeGen" (nzOnOk)="state=ViewState.CodeGen">
+    <div>
+        <div nz-row>
+            <div nz-row [nzGutter]="8 ">
+                <div nz-col [nzSpan]="8 ">
+                    <nz-card nzTitle="Sequelize 代码生成 " (click)="templateStr=sequelizeStr ">
+                        <p></p>
+                    </nz-card>
+                </div>
+                <div nz-col [nzSpan]="8 ">
+                    <nz-card nzTitle="eggjs Rest接口风格代码生成 " (click)="templateStr=eggjsRestStr ">
+                        <p></p>
+                    </nz-card>
+                </div>
+                <div nz-col [nzSpan]="8 ">
+                    <nz-card nzTitle="Card title ">
+                        <p>Card content</p>
+                    </nz-card>
+                </div>
+            </div>
+            <div nz-row [nzGutter]="8 ">
+                <div nz-col [nzSpan]="8 ">
+                    <nz-card nzTitle="Card title ">
+                        <p>Card content</p>
+                    </nz-card>
+                </div>
+                <div nz-col [nzSpan]="8 ">
+                    <nz-card nzTitle="Card title ">
+                        <p>Card content</p>
+                    </nz-card>
+                </div>
+                <div nz-col [nzSpan]="8 ">
+                    <nz-card nzTitle="Card title ">
+                        <p>Card content</p>
+                    </nz-card>
+                </div>
+            </div>
+        </div>
+    </div>
+</nz-modal>

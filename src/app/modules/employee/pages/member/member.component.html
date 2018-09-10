@@ -1,0 +1,198 @@
+<app-query-toolbar [queryFields]="queryFields" (onSearch)="query($event)"></app-query-toolbar>
+<!-- 会员  新增  列表  详情       -->
+<ng-container *ngIf="state==View.mList">
+    <div style="height: 20px;"></div>
+    <div nz-row style="margin-bottom: 20px;">
+        <div nz-col nzSpan="10">
+            <label>注册时间:</label>
+            <nz-range-picker [(ngModel)]="dateRange" (ngModelChange)="onChange($event)" [nzSize]="size"></nz-range-picker>
+            <!-- <nz-range-picker [(ngModel)]="dateRange" (ngModelChange)="onChange($event)" ngshow></nz-range-picker> -->
+            <!-- <nz-range-picker [nzSize]="size"></nz-range-picker> -->
+        </div>
+        <div nz-col nzSpan="6">
+            <nz-select style="width: 200px;" nzShowSearch nzAllowClear nzPlaceHolder="账户状态" [(ngModel)]="status">
+                <nz-option nzLabel="未激活" nzValue="unactive"></nz-option>
+                <nz-option nzLabel="激活" nzValue="active"></nz-option>
+                <nz-option nzLabel="冻结" nzValue="frozen"></nz-option>
+                <nz-option nzLabel="禁用" nzValue="disabled"></nz-option>
+            </nz-select>
+        </div>
+
+        <div nz-col nzSpan="5" style="margin-right:20px">
+            <nz-input-group nzSearch [nzSuffix]="suffixButton">
+                <!-- <label>会员姓名:</label> -->
+                <input type="text" nz-input placeholder="会员姓名(输入关键字)" [(ngModel)]="memberName">
+            </nz-input-group>
+            <ng-template #suffixButton>
+                <button nz-button nzType="primary" nzSearch (click)="likeSearch()">搜索</button>
+            </ng-template>
+        </div>
+
+
+
+    </div>
+    <button nz-button nzType="primary" (click)="state=View.mCreat">+新增会员</button>
+
+
+
+
+    <nz-table #basicTable [nzData]="members" [nzPageIndex]="page" [nzPageSize]="pageSize" [nzTotal]="count" [nzShowPagination]="true">
+        <thead>
+            <tr>
+                <th>姓名</th>
+                <th>会员编号</th>
+                <th>手机号</th>
+                <th>状态</th>
+                <th>注册时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let member of members">
+                <td>{{member.name}}</td>
+                <td>{{member.no}}</td>
+                <td>{{member.mobi}}</td>
+                <td>
+                    <span [ngSwitch]="member.status">
+                        <p *ngSwitchCase="'active'">
+                            激活
+                        </p>
+                        <p *ngSwitchCase="'unactive'">
+                            未激活
+                        </p>
+                        <p *ngSwitchCase="'frozen'">
+                            冻结
+                        </p>
+                        <p *ngSwitchCase="'disabled'">
+                            禁用
+                        </p>
+                        <p *ngSwitchDefault>
+
+                        </p>
+                    </span>
+                </td>
+                <td>{{member.createTime|date:'yyyy-MM-dd'}}</td>
+                <td>
+
+
+                    <a [routerLink]="['./detail/'+member.id]" style="margin-right: 20px">详情</a>
+                    <a [routerLink]="['./detail/'+member.id]">开卡</a>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-container>
+
+
+
+<div *ngIf="View.mCreat==state">
+    <div style="height: 20px;"></div>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>手机号</nz-form-label>
+        <nz-form-control [nzSpan]="10" class="phone">
+            <div nz-row [nzGutter]="8">
+                <div nz-col [nzSpan]="12">
+                    <input nz-input placeholder="手机号" (blur)="phoneValide=commonService.checkPhone(member.mobi)" type="number" [(ngModel)]="member.mobi">
+                </div>
+                <div nz-col [nzSpan]="12">
+                    <button nz-button nzType="primary" (click)="checkMobile()">检测手机号</button>
+
+                </div>
+            </div>
+            <nz-form-explain *ngIf="!phoneValide">输入手机号不合法！</nz-form-explain>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>会员类型</nz-form-label>
+        <nz-form-control>
+            <nz-select style="width: 200px;" (nzOnSearch)="select.value=''" #select nzPlaceHolder="会员类型" [(ngModel)]="selectedMemberType">
+                <nz-option nzLabel="个人" nzValue="'memberType.PERSONAL'"></nz-option>
+                <nz-option nzLabel="企业" nzValue="'memberType.COMPANY'"></nz-option>
+            </nz-select>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>姓名</nz-form-label>
+        <nz-form-control [nzSpan]="6" nzHasFeedback>
+            <input nz-input placeholder="请输入姓名" [(ngModel)]="member.name" required>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>支付密码</nz-form-label>
+        <nz-form-control [nzSpan]="6" nzHasFeedback>
+            <input nz-input type="password" [(ngModel)]="member.payPassword" required>
+        </nz-form-control>
+
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>确认密码</nz-form-label>
+        <nz-form-control [nzSpan]="6" nzHasFeedback>
+            <input nz-input type="password" placeholder="再次输入密码" [(ngModel)]="confirme">
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7">联系地址</nz-form-label>
+        <nz-form-control [nzSpan]="6" nzHasFeedback>
+            <textarea nz-input placeholder="联系地址" nzAutosize [(ngModel)]="member.address"></textarea>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>身份证号</nz-form-label>
+        <nz-form-control [nzSpan]="6" nzHasFeedback>
+            <input nz-input placeholder="身份证号" type="text" [(ngModel)]="member.idCardNo">
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>上传身份证照</nz-form-label>
+        <nz-form-control [nzSpan]="6" nzHasFeedback>
+            <nz-upload nzAction="https://jsonplaceholder.typicode.com/posts/">
+                <button nz-button>
+                    <i class="anticon anticon-upload"></i>
+                    <span>Click to Upload</span>
+                </button>
+            </nz-upload>
+        </nz-form-control>
+    </nz-form-item>
+
+    <ng-container *ngIf=" memberType == selectedMemberType">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="7" nzRequired>法人姓名</nz-form-label>
+            <nz-form-control [nzSpan]="6" nzHasFeedback>
+                <input nz-input placeholder="身份证号" type="text" [(ngModel)]="member.legalName">
+
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="7" nzRequired>税号</nz-form-label>
+            <nz-form-control [nzSpan]="6" nzHasFeedback>
+                <input nz-input placeholder="税号" type="text" [(ngModel)]="member.taxNo">
+
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="7" nzRequired>联系电话</nz-form-label>
+            <nz-form-control [nzSpan]="6" nzHasFeedback>
+                <input nz-input placeholder="联系电话" type="text" [(ngModel)]="member.taxNo">
+
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="7" nzRequired>上传营业执照</nz-form-label>
+            <nz-form-control [nzSpan]="6" nzHasFeedback>
+                <nz-upload nzAction="https://jsonplaceholder.typicode.com/posts/">
+                    <button nz-button>
+                        <i class="anticon anticon-upload"></i>
+                        <span>Click to Upload</span>
+                    </button>
+                </nz-upload>
+            </nz-form-control>
+        </nz-form-item>
+    </ng-container>
+
+    <nz-form-item>
+        <nz-form-control [nzXs]="{span:12,offset:7}" [nzSm]="{span:12,offset:7}">
+            <button nz-button nzType="default" (click)="state=View.mList">取消</button>
+            <button nz-button nzType="primary" (click)="state=View.mList;saveMember()">确定</button>
+        </nz-form-control>
+    </nz-form-item>
+</div>

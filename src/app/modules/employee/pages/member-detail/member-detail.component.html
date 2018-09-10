@@ -1,0 +1,240 @@
+<ng-container *ngIf="state==View.mList">
+  <div style="height: 20px;"></div>
+  <div *ngIf="customer" class="customerDiv" style="display: flex;justify-content: flex-start;align-items: flex-end;">
+    <div style="margin-left: 30px;">
+      <h1>
+        <i class="anticon anticon-mobile" style="color: blue"></i>&nbsp;&nbsp;手机号：{{customer.mobi}} </h1>
+      <p>用户名：&nbsp;&nbsp;&nbsp;{{customer.name}} </p>
+      <p>注册时间：&nbsp;{{customer.createTime|date:'yyyy-MM-dd'}} </p>
+      <p>注册方式：&nbsp;{{customer.createWay}}&nbsp;&nbsp;</p>
+    </div>
+    <div style="margin-left: 30px;">
+      <p>密码：&nbsp;{{customer.password}}&nbsp;&nbsp;&nbsp;
+        <button nz-button nzType="primary" (click)="modifyPayPassword()">用户改密</button>
+      </p>
+
+      <p>备注：&nbsp;请于两个工作日前确认 </p>
+    </div>
+    <div style="margin-left: 30px;">
+
+    </div>
+
+  </div>
+
+
+  <!-- <nz-card nzTitle="流程进度">
+    <nz-steps>
+      <nz-step nzTitle="Finished" nzDescription="This is a description."></nz-step>
+      <nz-step nzTitle="In Progress" nzDescription="This is a description."></nz-step>
+      <nz-step nzTitle="Waiting" nzDescription="This is a description."></nz-step>
+    </nz-steps>
+  </nz-card> -->
+
+  <nz-card nzTitle="会员信息">
+    <div *ngIf="member || employee" class="customerDiv" style="display: flex;justify-content: space-between;align-items: flex-end;">
+      <div>
+        <p>开户时间：&nbsp;{{member.createTime|date:'yyyy-MM-dd hh:mm:ss'}}</p>
+        <p>住址：&nbsp;{{member.address}}</p>
+        <p>密码：&nbsp;{{member.payPassword}}&nbsp;&nbsp;&nbsp;
+          <button nz-button nzType="primary" (click)="modifyPayPassword()">改支付密码</button>
+        </p>
+      </div>
+      <div>
+        <p>经办人：&nbsp;{{employee.name}}</p>
+        <p>联系地址：&nbsp;{{member.address}}</p>
+      </div>
+      <div>
+        <!-- <p>帐户余额：&nbsp;{{member.balance}}￥</p> -->
+      </div>
+      <div style="margin-left: 30px;">
+        <ng-container [ngSwitch]="member.status">
+          <div *ngSwitchCase="CommonStatusEnum.ENABLE">
+            <button nz-button nzType="primary"></button>
+          </div>
+          <div *ngSwitchCase="CardStatus.Enable">
+            <button nz-button nzType="primary"></button>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+  </nz-card>
+
+  <nz-card nzTitle="成员信息">
+    <button *ngIf="member.customers" (click)="state=View.mCreat" nz-button nzType="primary">添加成员</button>
+    <!-- <div *ngIf="customer.card" style="display: flex;justify-content: space-between;align-items: flex-end;">
+      <div>
+        <p>开卡时间：&nbsp;{{customer.card.createTime|date:'yyyy-MM-dd hh:mm:ss'}}</p>
+      </div>
+      <div>
+        <p>经办人：&nbsp;{{employee.name}}</p>
+      </div>
+      <div>
+        <button nz-button nzType="primary">废用</button>
+      </div>
+    </div> -->
+    <nz-table #basicTable *ngIf="member.customers" [nzData]="member.customers">
+      <thead>
+        <tr>
+
+          <th>成员姓名</th>
+          <th>手机号</th>
+          <th>卡号</th>
+          <th>卡状态</th>
+          <th>开卡时间</th>
+          <th>操作</th>
+          <th>管理</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let currentCustomer of member.customers">
+          <td>{{currentCustomer.name}}</td>
+          <td>{{currentCustomer.mobi}}</td>
+          <td>
+            <ng-container *ngIf="currentCustomer.card">{{currentCustomer.card.no}}</ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="currentCustomer.card">
+              <ng-container [ngSwitch]="currentCustomer.card.status">
+                <div *ngSwitchCase="CardStatus.Active">
+                  激活
+                </div>
+                <div *ngSwitchCase="CardStatus.Enable">
+                  启用
+                </div>
+                <div *ngSwitchCase="CardStatus.Frozen">
+                  挂失
+                </div>
+                <div *ngSwitchCase="CardStatus.Disabled">
+                  禁用
+                </div>
+              </ng-container>
+            </ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="currentCustomer.card">{{currentCustomer.card.createTime|date:'yyyy-MM-dd hh:mm:ss'}}</ng-container>
+          </td>
+          <td>
+            <ng-container *ngIf="currentCustomer.card">
+              <ng-container [ngSwitch]="currentCustomer.card.status">
+                <div *ngSwitchCase="CardStatus.Active">
+                  <button nz-button nzType="primary" (click)="changeCardStatus(currentCustomer.card.id,CardStatus.Disabled)">禁用</button>
+                  <button nz-button nzType="primary" (click)="changeCardStatus(currentCustomer.card.id,CardStatus.Frozen)">挂失</button>
+
+                </div>
+                <div *ngSwitchCase="CardStatus.Disabled">
+                  <button nz-button nzType="primary" (click)="changeCardStatus(currentCustomer.card.id,CardStatus.Active)">启用</button>
+                </div>
+                <div *ngSwitchCase="CardStatus.Frozen">
+                  <button nz-button nzType="primary" (click)="changeCardStatus(currentCustomer.card.id,CardStatus.Active)">恢复</button>
+                </div>
+              </ng-container>
+            </ng-container>
+            <button nz-button nzType="primary" *ngIf="!currentCustomer.card" (click)="state=View.mUpdate;showCustomer=currentCustomer">绑卡</button>
+          </td>
+          <td>
+            <ng-container *ngIf="currentCustomer.card">
+              <button nz-button nzType="primary" (click)="changeCardStatus(currentCustomer.card.id,CardStatus.Cancel)">注销</button>
+              <button nz-button nzType="primary" (click)="state=View.mUpdate;showCustomer=currentCustomer">补发</button>
+            </ng-container>
+
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+  </nz-card>
+</ng-container>
+
+<div *ngIf="View.mCreat==state">
+  <div style="height: 20px;"></div>
+  <div class="middleDiv">
+    <nz-card nzTitle="会员信息">
+      <p>会员手机号：{{member.mobi}}</p>
+      <p>会员身份证：{{member.idCardNo}}</p>
+      <p>会员姓名：{{member.name}}</p>
+    </nz-card>
+  </div>
+
+  <div class="middleDiv" style="margin-top: 20px;">
+    <nz-card nzTitle="添加成员">
+
+      <!-- <form [formGroup]="relationCardForm" (ngSubmit)="relationCard()">
+        <div class="form-group">
+          <label>申请人手机号：</label>
+          <input class="form-control" type="text" formControlName="customerMobi" required/>
+          <div *ngIf="formErrors.customerMobi" class="showerr">{{formErrors.customerMobi}}</div>
+        </div>
+        <div class="form-group">
+          <label>申请人姓名：</label>
+          <input class="form-control" type="text" formControlName="customerName" required/>
+          <div *ngIf="formErrors.customerName" class="showerr">{{formErrors.customerName}}</div>
+        </div>
+        <div>
+          <button nz-button nzType="default" (click)="state=View.mList">取消</button>
+          <button nz-button nzType="primary" (click)="state=View.mList;saveCustomer()">确定</button>
+        </div>
+      </form> -->
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>手机号</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input placeholder="请输入手机号" type="text" (blur)="phoneValide=commonService.checkPhone(toApiCustomer.mobi)" [(ngModel)]="toApiCustomer.mobi">
+          <nz-form-explain *ngIf="!phoneValide">输入手机号不合法！</nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>姓名</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input placeholder="请输入姓名" type="text" [(ngModel)]="toApiCustomer.name">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+
+        <nz-form-control [nzXs]="{span:12,offset:7}" [nzSm]="{span:12,offset:7}">
+          <button nz-button nzType="default" (click)="state=View.mList">取消</button>
+          <button nz-button nzType="primary" (click)="state=View.mList;saveCustomer()">确定</button>
+        </nz-form-control>
+      </nz-form-item>
+    </nz-card>
+  </div>
+
+</div>
+
+<div *ngIf="View.mUpdate==state">
+  <div style="height: 20px;"></div>
+  <div class="middleDiv" style="margin-top: 20px;">
+    <nz-card nzTitle="绑定会员卡">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>手机号：</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input placeholder="请输入手机号" type="text" [(ngModel)]="showCustomer.mobi" readonly>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>姓名：</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input placeholder="请输入姓名" type="text" [(ngModel)]="showCustomer.name" readonly>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>卡号：</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+          <input nz-input placeholder="请获取卡号" type="text" [(ngModel)]="cardNo">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+
+        <nz-form-control [nzXs]="{span:12,offset:7}" [nzSm]="{span:12,offset:7}">
+          <button nz-button nzType="default" (click)="state=View.mList">取消</button>
+          <button nz-button nzType="primary" (click)="state=View.mList;relationCard()">绑卡</button>
+        </nz-form-control>
+      </nz-form-item>
+    </nz-card>
+  </div>
+
+
+</div>

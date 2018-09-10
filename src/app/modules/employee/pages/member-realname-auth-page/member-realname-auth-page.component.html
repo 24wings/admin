@@ -1,0 +1,54 @@
+<div style="text-align: center;padding-top: 40px;">
+    <nz-button-group>
+        <button nz-button [nzType]="View.WaitAuth==state?'primary':'default'" (click)="toWaitAuth()">待审核</button>
+        <button nz-button [nzType]="View.HadAuth==state?'primary':'default'" (click)="toHadAuth()"> 已审核</button>
+    </nz-button-group>
+</div>
+
+<button nz-button nzType="primary">批量审核</button>
+<nz-table #payFeeListTable [nzData]="memberRealnameAuths">
+    <thead>
+        <tr>
+            <th nzShowCheckbox></th>
+            <th>审核会员</th>
+            <th>审核日期</th>
+
+            <th>身份证号</th>
+            <th>身份证</th>
+            <th>创建时间</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of  memberRealnameAuths">
+            <!--  -->
+            <td nzShowCheckbox [(nzChecked)]="data.checked"></td>
+            <td>{{data.customer.name}}</td>
+            <td>{{data.createTime| date:'yyyy-MM-dd'}}</td>
+
+            <td>{{data.idcard}}</td>
+            <td>{{data.idcardImageurl}}</td>
+
+            <td>{{data.createTime| date:'yyyy-MM-dd'}}</td>
+            <td>{{data.status}}</td>
+            <td>
+                <span [ngSwitch]="data.status">
+          <ng-container *ngSwitchCase="'active'">
+         
+            <nz-tag [nzColor]="'blue'">代收款</nz-tag>
+          </ng-container>
+          <ng-container *ngSwitchCase="'finish'">
+            <nz-tag nzColor="cyan">已收款</nz-tag>
+          </ng-container>
+          <p *ngSwitchDefault>
+          
+          </p>
+          </span>
+            </td>
+            <td>
+                <button nz-button nzType="primary" *ngIf="data.status=='active'" (click)="preFinishRecord(data)">结款</button>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>

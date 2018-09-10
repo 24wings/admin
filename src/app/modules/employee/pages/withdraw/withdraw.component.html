@@ -1,0 +1,85 @@
+<ng-container>
+
+  <div class="middleDiv">
+    <nz-card nzTitle="现金提现">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzRequired>卡号</nz-form-label>
+        <nz-form-control [nzSpan]="16" nzHasFeedback>
+          <input nzInput placeholder="请输入卡号" type="text" [(ngModel)]="cardNo" (keyup.enter)="memberDetail()" />
+        </nz-form-control>
+      </nz-form-item>
+    </nz-card>
+  </div>
+
+  <div class="middleDiv">
+    <nz-card nzTitle="会员信息" style="height: 240px;">
+      <div style="display: flex;justify-content: flex-start;align-items: center;" *ngIf="member">
+        <div class="memberInfoItem">
+          <p>会员名称：{{member.name}}</p>
+          <p>手机号：{{member.mobi}}</p>
+          <p>身份证号：{{member.idCardNo}}</p>
+          <p>可用余额：
+            <span style="font-size: 20px;font-weight: 100;">{{account.balAmt}}</span>
+          </p>
+        </div>
+        <div class="memberInfoItem">
+          <p>会员编号：{{member.no}}</p>
+          <p>会员状态：{{member.status}}</p>
+          <p>地址：{{member.address}}</p>
+          <p>冻结余额：{{account.frozenAmt}}</p>
+          <p></p>
+        </div>
+      </div>
+    </nz-card>
+  </div>
+
+  <div class="middleDiv">
+    <nz-card nzTitle="提现信息">
+      <form nz-form [formGroup]="withdrawForm" (ngSubmit)="memberWithdraw($event,withdrawForm.value)">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7" nzRequired>提现金额</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <input nz-input type="number" formControlName="amount" (blur)="showBalance(amoutInput.value)" (change)="showBalance(amoutInput.value)"
+              required #amoutInput />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7" nzRequired>提现后余额</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <input nz-input type="number" [style.color]="afterAmoutInput.value>0 ? 'black':'red'" formControlName="afterAmout" #afterAmoutInput
+              readonly required/>
+            <nz-form-explain *ngIf="withdrawForm.get('afterAmout').errors">
+              <ng-container *ngIf="withdrawForm.get('afterAmout').hasError('confirm')">
+                余额不足!
+              </ng-container>
+            </nz-form-explain>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7" nzRequired>支付密码</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <input nz-input type="password" formControlName="payPassword" required/>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzSpan]="7">备注</nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <textarea nz-input rows="2" formControlName="remark"></textarea>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-control [nzOffset]="7" [nzSpan]="12">
+
+            <button nz-button nzType="primary" [disabled]="!withdrawForm.valid">提交</button>
+            <button nz-button (click)="resetForm()">重置</button>
+          </nz-form-control>
+        </nz-form-item>
+
+      </form>
+    </nz-card>
+  </div>
+</ng-container>

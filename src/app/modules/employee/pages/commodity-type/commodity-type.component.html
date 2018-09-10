@@ -1,0 +1,121 @@
+<div style="height: 10px">
+</div>
+<button (click)="ListCategory()" nz-button nzType="primary">刷新</button>
+<div *ngIf="txnarea">
+    <h5>所属交易市场</h5><span>{{txnarea.txnName}}</span>
+</div>
+
+<div style="    border: 1px dashed #f0f0f0;
+padding: 10px;
+margin: 10px 0;
+width: 300px;
+text-align: center;cursor: pointer;" (click)=" showAddCommodify()">
+    <i class="anticon anticon-plus"></i><span>添加一级商品分类</span>
+</div>
+
+<nz-table #nzTable [nzPageIndex]="page" [nzPageSize]="pageSize" [nzTotal]="count">
+    <thead>
+        <tr>
+            <th></th>
+            <th nzWidth="10%">类目名</th>
+            <th nzWidth="10%">编号</th>
+            <th nzWidth="10%">父id</th>
+            <th nzWidth="10%">是否显示</th>
+            <th nzWidth="10%">显示的顺序</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+
+
+
+
+        <tr *ngFor="let category of categorys">
+            <td [nzIndentSize]="category.level*20" nzShowExpand (nzExpandChange)="openChild(category,$event)"></td>
+            <td>
+                {{category.cateName}}
+            </td>
+            <td>{{category.cateCode}}</td>
+            <td>{{category.parentId}}</td>
+            <td>{{category.isShow}}</td>
+            <td>{{category.orderNo}}</td>
+            <td>
+
+
+                <i class="anticon anticon-plus-circle-o" style="margin: 0 10px;cursor: pointer;" (click)="showAddCommodify(category)" nz-tooltip nzTitle="新增"></i>
+                <i class="anticon anticon-minus-circle-o" style="margin: 0 10px;cursor: pointer;" nz-tooltip nzTitle="删除" nz-popconfirm nzTitle="确认删除吗" (nzOnConfirm)="deleteCate(category)" (nzOnCancel)="cancel()"></i>
+                <i class="iconfont icon-bianji5" style="margin: 0 10px;cursor: pointer;" nz-tooltip nzTitle="编辑" (click)="showEditCommodify(category)"></i>
+            </td>
+        </tr>
+
+
+    </tbody>
+</nz-table>
+
+<nz-modal [(nzVisible)]="View.CreateCommo==state" nzTitle="添加商品类" (nzOnCancel)="handleCancel()" (nzOnOk)=" AddCommodify()">
+    <div *ngIf="selectCategory">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4" nzRequired>上级分类</nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <input type="text" nz-input placeholder="" [(ngModel)]="selectCategory.cateName" disabled>
+
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzRequired>商品名称</nz-form-label>
+        <nz-form-control [nzSpan]="8">
+            <input type="text" nz-input placeholder="请输入商品名称" [(ngModel)]="newcategory.cateName">
+
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzRequired>商品编码</nz-form-label>
+        <nz-form-control [nzSpan]="8">
+            <input type="text" nz-input placeholder="请输入商品编码" [(ngModel)]="newcategory.cateCode">
+
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzRequired>选择所属国家商品分类</nz-form-label>
+        <nz-form-control [nzSpan]="8">
+            <nz-cascader [nzOptions]="internalCategoryOptions" [(ngModel)]="newcategory.linkCateCode">
+            </nz-cascader>
+
+        </nz-form-control>
+    </nz-form-item>
+</nz-modal>
+<nz-modal [(nzVisible)]="View.EditCommo==state" nzTitle="编辑商品类" (nzOnCancel)="handleCancel()" (nzOnOk)="OkShowEditCommodify()">
+
+
+    <div *ngIf="editCategory">
+
+
+
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4" nzRequired>上级分类</nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <input type="text" nz-input placeholder="" [(ngModel)]="editCategory.parentId" disabled>
+
+            </nz-form-control>
+        </nz-form-item>
+
+
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4" nzRequired>商品名称</nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <input type="text" nz-input placeholder="请输入商品名称" [(ngModel)]="editCategory.cateName">
+
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4" nzRequired>商品编码 </nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <input type="text" nz-input placeholder="请输入商品编码" [(ngModel)]="editCategory.cateCode">
+
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+
+</nz-modal>

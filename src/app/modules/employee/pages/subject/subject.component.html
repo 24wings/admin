@@ -1,0 +1,131 @@
+<div style="height: 10px">
+</div>
+
+<button (click)="allSubject()" nz-button nzType="primary">刷新</button> 全部：
+
+
+<div class="row" *ngFor="let data of subjectGroups ;let i=index" style="display: flex;justify-content: flex-start;  border-bottom: 1px dashed #f0f0f0;padding: 30px;">
+    <div style="margin-right: 30px;">
+        {{ data.subName}}
+    </div>
+    <div style="display: flex;justify-content: flex-start;align-items: center">
+        <div style="display: flex;justify-content: flex-start" *ngFor="let child of data.children">
+
+
+            <nz-tag nzMode="checkable" [nzChecked]="child.checked" (nzCheckedChange)="checkChange(child)">{{child.subName}}</nz-tag>
+            <!-- 显示三级 -->
+            <!-- <div *ngFor="let item of child.children">
+                <span>{{item.subName}}</span>
+            </div> -->
+
+        </div>
+        <!-- <i class="anticon anticon-plus" (click)=" showAddSubject(data)" style="cursor: pointer;"></i> -->
+    </div>
+
+</div>
+
+<!-- <nz-tag *ngFor="let i of categories; let idx = index" nzMode="checkable" [(nzChecked)]="i.value" (nzCheckedChange)="change(i)">{{i.subName}}</nz-tag> -->
+
+<nz-modal [(nzVisible)]="View.CreateSubject==state" nzTitle="添加收支科目" (nzOnCancel)="handleCancel()" (nzOnOk)=" AddSubject()">
+    <!-- <div *ngIf="selectCategory">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4" nzRequired>上级分类</nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <input type="text" nz-input placeholder="" [(ngModel)]="selectCategory.cateName" disabled>
+
+            </nz-form-control>
+        </nz-form-item>
+    </div> -->
+    <nz-form-item *ngIf="selectTop">
+        <nz-form-label [nzSpan]="4" nzRequired>收支链接</nz-form-label>
+        <nz-form-control [nzSpan]="8">
+            <input type="text" nz-input placeholder="国家收支" [(ngModel)]="selectTop.subName" disabled>
+
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzRequired>收支名称</nz-form-label>
+        <nz-form-control [nzSpan]="8">
+            <input type="text" nz-input placeholder="请输入收支名称" [(ngModel)]="newSubject.subName">
+
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="4" nzRequired>编码</nz-form-label>
+        <nz-form-control [nzSpan]="8">
+            <input type="text" nz-input placeholder="请输入编码" [(ngModel)]="newSubject.subCode">
+
+        </nz-form-control>
+    </nz-form-item>
+
+
+</nz-modal>
+
+<nz-modal [(nzVisible)]="View.EditSubject==state" nzTitle="编辑收支科目" (nzOnCancel)="handleCancel()" (nzOnOk)=" okEditSubject()">
+    <!-- <div *ngIf="selectCategory">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="4" nzRequired>上级分类</nz-form-label>
+                <nz-form-control [nzSpan]="8">
+                    <input type="text" nz-input placeholder="" [(ngModel)]="selectCategory.cateName" disabled>
+    
+                </nz-form-control>
+            </nz-form-item>
+        </div> -->
+    <nz-form-item *ngIf="selectTop">
+        <nz-form-label [nzSpan]="4" nzRequired>收支链接</nz-form-label>
+        <nz-form-control [nzSpan]="8">
+            <input type="text" nz-input placeholder="国家收支" [(ngModel)]="selectTop.subName" disabled>
+
+        </nz-form-control>
+    </nz-form-item>
+    <div *ngIf="editSubject">
+
+
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4" nzRequired>收支名称</nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <input type="text" nz-input placeholder="请输入收支名称" [(ngModel)]="editSubject.subName">
+
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4" nzRequired>编码</nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <input type="text" nz-input placeholder="请输入编码" [(ngModel)]="editSubject.subCode">
+
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+
+</nz-modal>
+<div style="    border: 1px dashed #f0f0f0;
+padding: 10px;
+margin: 10px 0;
+width: 300px;
+text-align: center;cursor: pointer;">
+    <i class="anticon anticon-plus" (click)="state=View.CreateSubject"></i><span>添加收支科目</span>
+</div>
+<nz-table #basicTable *ngFor="let categorie of categoriesemp">
+
+    <thead>
+        <tr>
+            <th>编号</th>
+
+            <th>名称</th>
+            <th>操作</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td> {{categorie.subCode}}</td>
+            <td>{{categorie.subName}} </td>
+            <td>
+                <i class="iconfont icon-bianji5" style="cursor: pointer;" (click)="editSub(categorie)" nz-tooltip nzTitle="编辑"></i>
+
+
+            </td>
+
+        </tr>
+    </tbody>
+</nz-table>

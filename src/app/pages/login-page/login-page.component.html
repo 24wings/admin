@@ -1,0 +1,61 @@
+<div class="container">
+
+    <div class="main">
+        <div class="top text-center">
+
+            <div class="desc">梭日科技市场管理</div>
+        </div>
+        <div class="login-form">
+            <div>
+
+                <!-- <nz-input [(ngModel)]="shop_id" [nzPlaceHolder]="'商户'" [nzSize]="'large'">
+          <ng-template #prefix>
+            <i class="anticon anticon-user"></i>
+          </ng-template>
+        </nz-input> -->
+                <nz-input-group [nzSuffix]="suffixTemplate" nzPrefixIcon="anticon anticon-user">
+                    <input type="text" nz-input placeholder="用户名" [(ngModel)]="username">
+                </nz-input-group>
+                <ng-template #suffixTemplate>
+                    <i class="anticon anticon-close-circle" (click)="username=null" *ngIf="username"></i>
+                </ng-template>
+
+
+            </div>
+            <div style="margin:20px auto;">
+                <nz-input-group [nzSuffix]="suffixTemplate" nzPrefixIcon="anticon anticon-user">
+                    <input type="password" nz-input placeholder="密码" [(ngModel)]="password">
+                </nz-input-group>
+                <ng-template #suffixTemplate>
+                    <i class="anticon anticon-close-circle" (click)="password=null" *ngIf="password"></i>
+                </ng-template>
+            </div>
+
+            <div>
+
+
+            </div>
+            <div style="display: FLEX;
+            justify-content: space-around;
+            margin: 20px;">
+
+
+
+                <!-- <a class="login-form-forgot" routerLink="/admin/forgot-password" class="login-form-forgot">忘记密码</a>
+                <a routerLink="/admin/signup">注册</a> -->
+
+
+            </div>
+
+
+            <button nz-button class="login-form-button" [nzType]="'primary'" [nzSize]="'large'" (click)="login()">登录</button>
+        </div>
+
+    </div>
+    <!-- footer -->
+    <div class="footer golbal-footer ">
+        <span class="copyright">
+      由刺月无影提供
+    </span>
+    </div>
+</div>

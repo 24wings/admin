@@ -1,0 +1,8 @@
+<!-- 查询框 -->
+<div style="display:flex;margin-bottom: 20px;">
+    <app-field [field]="field" [mode]="'query'" *ngFor="let field of queryFields" style="flex:2"></app-field>
+
+</div>
+<div style="flex:1" *ngIf="showSearchButton">
+    <button nz-button nzType="primary" (click)="search()">查询</button>
+</div>

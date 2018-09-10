@@ -1,0 +1,247 @@
+<!-- 费用清单 -->
+<div style="height:20px;"></div>
+
+
+<!-- 收费列表 -->
+<div nz-row>
+    <div nz-col nzSpan="6">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="7" nzRequired>手机号</nz-form-label>
+            <nz-form-control [nzSpan]="12" nzHasFeedback>
+                <input nz-input placeholder="手机号" type="number" [(ngModel)]="phone">
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+    <div nz-col nzSpan="8">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="7" nzRequired>所属科目</nz-form-label>
+
+            <nz-form-control [nzSpan]="12" nzHasFeedback>
+                <nz-select style="width: 120px;" [(ngModel)]="subjectId" nzAllowClear nzPlaceHolder="选择科目">
+                    <ng-container *ngFor="let subject of optionSubjects">
+                        <nz-option nzValue="{{subject.subjectId}}" nzLabel="{{subject.subjectName}}"></nz-option>
+
+                    </ng-container>
+                </nz-select>
+            </nz-form-control>
+
+        </nz-form-item>
+    </div>
+
+    <button nz-button nzType="primary" nz-col nzSpan="8" (click)="FeeAllList()">查询</button>
+
+
+
+</div>
+
+
+
+<div style="margin-bottom: 16px;">
+    <button nz-button nzType="primary" (click)="state=View.FeeAdd;">新增应收清单</button>
+    <button nz-button [disabled]="disabledButton" [nzType]="'primary'" [nzLoading]="operating" (click)="preFee()">
+        收费
+      </button>
+    <span style="margin-left: 8px;" *ngIf="checkedNumber">选中 {{checkedNumber}} 项</span>
+</div>
+<nz-table #rowSelectionTable [nzData]="feeLists" [nzPageIndex]="page" [nzPageSize]="pageSize" [nzTotal]="count" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageIndexChange)="refreshStatus()" (nzPageSizeChange)="refreshStatus()">
+    <thead>
+        <tr>
+            <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+            <th>费用名称</th>
+
+            <th>会员姓名</th>
+            <th>手机号</th>
+
+            <th>费用金额</th>
+            <th>所属科目</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of feeLists">
+            <!--  -->
+            <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="refreshStatus($event)"></td>
+            <td>{{data.title}}</td>
+
+            <td>{{getCustomer(data.member).name}}</td>
+            <td>{{getCustomer(data.member).mobi}}</td>
+            <td>{{data.arAmount}}</td>
+
+            <td>{{data.recvPaySubject.subjectName}}</td>
+            <td>
+                <a style="margin-right: 20px;" (click)="state=View.FeeUpdate;edit(data)">编辑</a>
+                <a style="margin-right: 20px;" nz-popconfirm nzTitle="确认删除吗？" (nzOnConfirm)="FeeDelete(data)" (nzOnCancel)="handleCancel()">删除</a>
+                <!-- <a style="margin-right: 20px;" (click)="">收费</a> -->
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+
+
+
+
+
+
+<nz-modal *ngIf="newFeel" [(nzVisible)]="View.FeeAdd==state" nzTitle="新增收费清单" (nzOnCancel)="handleCancel()" (nzOnOk)="AddFee()">
+
+
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>手机号</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <input nz-input placeholder="手机号" type="text" (change)="queryMemberByPhone()" [(ngModel)]="newFeeMobi">
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item *ngIf="newFeeMember">
+        <nz-form-label [nzSpan]="7" nzRequired>会员名称</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+            {{newFeeMember.name}}
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item *ngIf="!newFeeMember">
+        <nz-form-label [nzSpan]="7" nzRequired>找不到会员</nz-form-label>
+
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>费用名称</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <input nz-input placeholder="请输入费用名称" [(ngModel)]="newFeel.title">
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>费用金额（元）</nz-form-label>
+
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <input nz-input type="number" placeholder="请输入费用金额" [(ngModel)]="newFeel.arAmount">
+        </nz-form-control>
+
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>起始时间</nz-form-label>
+
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <nz-date-picker [(ngModel)]="startdate" (ngModelChange)="onChange($event)" nzShowTime></nz-date-picker>
+        </nz-form-control>
+
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>终止时间</nz-form-label>
+
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <nz-date-picker [(ngModel)]="finshdate" (ngModelChange)="onChange($event)" nzShowTime></nz-date-picker>
+        </nz-form-control>
+
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>所属科目</nz-form-label>
+
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <nz-select style="width: 120px;" [(ngModel)]="newFeel.subjectId" nzAllowClear nzPlaceHolder="Choose">
+
+                <ng-container *ngFor="let subject of optionSubjects">
+                    <nz-option nzValue="{{subject.subjectId}}" nzLabel="{{subject.subjectName}}"></nz-option>
+
+                </ng-container>
+            </nz-select>
+        </nz-form-control>
+
+    </nz-form-item>
+
+</nz-modal>
+
+
+
+
+<nz-modal *ngIf="feeList" [(nzVisible)]="View.FeeUpdate==state" nzTitle="更新收费清单" (nzOnCancel)="handleCancel()" (nzOnOk)="UpdateFee()">
+
+
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>手机号</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <input nz-input placeholder="收费人" type="text" [(ngModel)]="feeList.member.name" disabled>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>费用名称</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <input nz-input placeholder="请输入费用名称" [(ngModel)]="feeList.title">
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>费用金额（元）</nz-form-label>
+
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <input nz-input type="number" placeholder="请输入费用金额" [(ngModel)]="feeList.arAmount">
+        </nz-form-control>
+
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>起始时间</nz-form-label>
+
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <nz-date-picker [(ngModel)]="feeList.startDate" (ngModelChange)="onChange($event)" nzShowTime></nz-date-picker>
+        </nz-form-control>
+
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>终止时间</nz-form-label>
+
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <nz-date-picker [(ngModel)]="feeList.endDate" (ngModelChange)="onChange($event)" nzShowTime></nz-date-picker>
+        </nz-form-control>
+
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>所属科目</nz-form-label>
+
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <nz-select style="width: 120px;" [(ngModel)]="selectedValue" nzAllowClear nzPlaceHolder="收费科目">
+
+                <ng-container *ngFor="let subject of optionSubjects">
+                    <nz-option nzValue="{{subject.subjectId}}" nzLabel="{{subject.subjectName}}"></nz-option>
+
+                </ng-container>
+            </nz-select>
+        </nz-form-control>
+
+    </nz-form-item>
+
+</nz-modal>
+
+
+<!-- 创建收费记录 -->
+<nz-modal [nzVisible]="View.PreFee==state" [nzTitle]="'添加收费账单'" (nzOnOk)="state=View.FeeAll;payFeeRecordCreate()" (nzOnCancel)="state=View.FeeAll">
+    <nz-form-item>
+        <nz-form-label [nzSpan]="7" nzRequired>收费标题</nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback>
+            <input nz-input placeholder="收费标题" type="text" [(ngModel)]="newPayFeeRecord.title">
+        </nz-form-control>
+    </nz-form-item>
+    <nz-table #payFeeListTable [nzData]="newPayFeeRecord.payfeeLists" (nzCurrentPageDataChange)="currentPageDataChange($event)" (nzPageIndexChange)="refreshStatus()" (nzPageSizeChange)="refreshStatus()">
+        <thead>
+            <tr>
+                <th nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate" (nzCheckedChange)="checkAll($event)"></th>
+                <th>费用名称</th>
+
+                <th>费用金额</th>
+                <th>所属科目</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of  newPayFeeRecord.payfeeLists">
+                <!--  -->
+                <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="refreshStatus($event)"></td>
+                <td>{{data.title}}</td>
+
+                <td>{{data.shouldChargeMoney}}</td>
+                <td>{{data.status}}</td>
+                <td>
+                    <!-- <a style="margin-right: 20px;" (click)="state=View.FeeUpdate;edit(data)">编辑</a> -->
+                    <a style="margin-right: 20px;" nz-popconfirm nzTitle="确认移除吗？" (nzOnConfirm)="payFeeRemove(data)" (nzOnCancel)="handleCancel()">移除</a>
+                    <!-- <a style="margin-right: 20px;" (click)="">收费</a> -->
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+    <span>应收:{{newPayFeeRecord.shouldChargeMoney}}元</span>
+</nz-modal>

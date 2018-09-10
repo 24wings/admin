@@ -1,0 +1,109 @@
+<app-market-main-nav></app-market-main-nav>
+
+<div>
+    <div style="display: flex;">
+        <div style="width: 200px;flex-shrink: 0">
+            <nz-tree [(ngModel)]="orgNodes" (nzClick)="mouseAction('click',$event)" (nzExpandChange)="mouseAction('click',$event)">
+            </nz-tree>
+        </div>
+        <div style="width: 100%;">
+            <button nz-button nzType="primary" (click)="state=View.EmployeeCreate">添加员工</button>
+            <nz-table>
+                <thead>
+                    <tr>
+                        <th>员工姓名</th>
+                        <th>员工用户名</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of employees">
+                        <td>{{data.name}}</td>
+
+                        <td>{{data.userName}}</td>
+                        <!-- <td *ngIf="selectedOrg">{{selectedOrg.parentName || selectedOrg.orgName}}</td> -->
+                        <td>
+                            <button nz-button nzType="danger" *ngIf="data.status==EmployeeStatus.Active" (click)="employeeDisabled(data)">禁用</button>
+                            <button nz-button nzType="primary" *ngIf="data.status==EmployeeStatus.Disabled" (click)="employeeActive(data)">启用</button>
+                            <button nz-button nzType="primary" (click)="selectedEmployee=data;state=View.EmployeeEdit">修改</button>
+                            <button nz-button nztype="danger" nz-popconfirm nzTitle="删除该员工?" nzOkText="确定" nzCancelText="取消" (nzOnConfirm)="employeeDelete(data.id)">删除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+    </div>
+</div>
+
+
+<nz-modal [nzVisible]="state==View.EmployeeCreate" (nzOnCancel)="state=View.List" (nzOnOk)="state=View.List;createEmployee()">
+
+    <div *ngIf="selectedOrg">
+        <nz-form-item>
+            <nz-form-label nzfor="email">所属组织</nz-form-label>
+            <nz-form-control>
+                <input disabled nz-input [(ngModel)]="selectedOrg.orgName" type="text">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nzfor="email">员工姓名</nz-form-label>
+            <nz-form-control>
+                <input nz-input [(ngModel)]="newEmployee.name" type="text">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nzfor="email">员工用户名</nz-form-label>
+            <nz-form-control>
+                <input nz-input [(ngModel)]="newEmployee.userName" type="text">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nzfor="email">员工密码</nz-form-label>
+            <nz-form-control>
+                <input nz-input [(ngModel)]="newEmployee.password" type="password">
+            </nz-form-control>
+        </nz-form-item>
+
+    </div>
+    <h4>角色列表</h4>
+    <nz-transfer *ngIf="employeeRoles" [(nzDataSource)]="employeeRoles" (nzChange)="epChange($event)" [nzTitles]="['员工角色', '所有角色']"
+        (nzSelectChange)="select($event)" (nzChange)="change($event)">
+    </nz-transfer>
+</nz-modal>
+
+
+
+<nz-modal [nzVisible]="state==View.EmployeeEdit" nzTitle="修改员工信息" (nzOnCancel)="state=View.List" (nzOnOk)="state=View.List;employeeUpdate()">
+
+    <div *ngIf="selectedEmployee">
+        <nz-form-item>
+            <nz-form-label nzfor="email">所属组织</nz-form-label>
+            <nz-form-control>
+                <input disabled nz-input [(ngModel)]="selectedOrg.orgName" type="text">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nzfor="email">员工姓名</nz-form-label>
+            <nz-form-control>
+                <input nz-input [(ngModel)]="selectedEmployee.name" type="text">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nzfor="email">员工用户名</nz-form-label>
+            <nz-form-control>
+                <input nz-input [(ngModel)]="selectedEmployee.userName" type="text">
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nzfor="email">员工密码</nz-form-label>
+            <nz-form-control>
+                <input nz-input [(ngModel)]="selectedEmployee.password" type="password">
+            </nz-form-control>
+        </nz-form-item>
+
+    </div>
+    <h4>角色列表</h4>
+    <nz-transfer *ngIf="employeeRoles" [(nzDataSource)]="employeeRoles" (nzChange)="epChange($event)" [nzTitles]="['员工角色', '所有角色']"
+        (nzSelectChange)="select($event)" (nzChange)="change($event)">
+    </nz-transfer>
+</nz-modal>

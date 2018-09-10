@@ -1,0 +1,39 @@
+<div class="container">
+    <div class="main">
+        <div class="top text-center">
+            <div class="desc">开发人员系统</div>
+        </div>
+        <div class="login-form">
+            <div>
+                <nz-form-item>
+                    <nz-input-group [nzSuffix]="suffixTemplate" nzPrefixIcon="anticon anticon-user">
+                        <input type="text" nz-input placeholder="用户名123" [(ngModel)]="username">
+                    </nz-input-group>
+                    <nz-form-explain>The input is not valid E-mail!</nz-form-explain>
+
+                </nz-form-item>
+
+                <ng-template #suffixTemplate>
+                    <i class="anticon anticon-close-circle" (click)="username=null" *ngIf="username"></i>
+                </ng-template>
+
+            </div>
+            <div style="margin:20px auto;">
+                <nz-input-group [nzSuffix]="suffixTemplate" nzPrefixIcon="anticon anticon-user">
+                    <input type="password" nz-input placeholder="密码123" [(ngModel)]="password">
+                </nz-input-group>
+                <ng-template #suffixTemplate>
+                    <i class="anticon anticon-close-circle" (click)="password=null" *ngIf="password"></i>
+                </ng-template>
+            </div>
+            <button nz-button class="login-form-button" [nzType]="'primary'" [nzSize]="'large'" (click)="login()">登录</button>
+        </div>
+
+    </div>
+    <!-- footer -->
+    <div class="footer golbal-footer ">
+        <span class="copyright">
+      <!-- 由刺月无影提供 -->
+    </span>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+<div>
+    <div style="display: flex;">
+        <div style="width: 200px;flex-shrink: 0">
+            <nz-tree [(ngModel)]="orgNodes" [nzShowLine]="true" (nzClick)="mouseAction('click',$event)" (nzExpandChange)="mouseAction('expand',$event)" nzDefaultExpandAll>
+            </nz-tree>
+        </div>
+        <div style="width: 100%;">
+            <button nz-button nzType="primary" (click)="state=View.CreateOrg">添加</button>
+            <nz-table>
+
+
+                <thead>
+                    <tr>
+                        <th>机构名称</th>
+                        <th>上级机构</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of dataSet">
+                        <td>{{data.orgName}}</td>
+                        <td *ngIf="selectedOrg">{{selectedOrg.parentName || selectedOrg.orgName}}</td>
+                        <td>
+                            <button nz-button nzType="primary" (click)="editOrging(data.orgId)">更新</button>
+                            <button nz-button nztype="danger" (click)="orgDelete(data.orgId)">删除</button></td>
+                    </tr>
+                </tbody>
+
+            </nz-table>
+        </div>
+    </div>
+</div>
+
+<nz-modal nztitle="创建组织" [nzVisible]="state==View.CreateOrg" (nzOnCancel)="state=View.ListOrgs" (nzOnOk)="state=View.ListOrgs;createOrg()">
+    <div>
+        <nz-form-item *ngIf="selectedOrg">
+            <nz-form-label nzfor="email">上级组织</nz-form-label>
+            <nz-form-control><input disabled nz-input [(ngModel)]="selectedOrg.orgName" type="text"></nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nzfor="email">组织名字</nz-form-label>
+            <nz-form-control><input nz-input [(ngModel)]="newOrg.orgName" type="text"></nz-form-control>
+        </nz-form-item>
+    </div>
+</nz-modal>
+<nz-modal nztitle="更新组织" [nzVisible]="state==View.EditOrg" (nzOnCancel)="state=View.ListOrgs" (nzOnOk)="state=View.ListOrgs;updateOrg()">
+    <div *ngIf="editOrg">
+        <nz-form-item>
+            <nz-form-label nzfor="email">上级组织</nz-form-label>
+            <nz-form-control><input disabled nz-input [(ngModel)]="editOrg.parentName" type="text"></nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label nzfor="email">组织名字</nz-form-label>
+            <nz-form-control><input nz-input [(ngModel)]="editOrg.orgName" type="text"></nz-form-control>
+        </nz-form-item>
+    </div>
+</nz-modal>
