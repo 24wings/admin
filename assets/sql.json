@@ -1,0 +1,117 @@
+{
+    "ok": true,
+    "status": 200,
+    "msg": "",
+    "data": {
+        "data": [],
+        "meta": [{
+                "field": "epId",
+                "type": "INT"
+            },
+            {
+                "field": "createBy",
+                "type": "INT"
+            },
+            {
+                "field": "createName",
+                "type": "VARCHAR"
+            },
+            {
+                "field": "createTime",
+                "type": "DATETIME"
+            },
+            {
+                "field": "epName",
+                "type": "VARCHAR"
+            },
+            {
+                "field": "epStatus",
+                "type": "INT"
+            },
+            {
+                "field": "epUserName",
+                "type": "VARCHAR"
+            },
+            {
+                "field": "isDel",
+                "type": "INT"
+            },
+            {
+                "field": "marketId",
+                "type": "INT"
+            },
+            {
+                "field": "orgId",
+                "type": "INT"
+            },
+            {
+                "field": "password",
+                "type": "VARCHAR"
+            },
+            {
+                "field": "passwordHash",
+                "type": "VARCHAR"
+            },
+            {
+                "field": "roleIds",
+                "type": "VARCHAR"
+            },
+            {
+                "field": "updateTime",
+                "type": "DATETIME"
+            },
+            {
+                "field": "roleId",
+                "type": "INT"
+            },
+            {
+                "field": "createBy",
+                "type": "INT"
+            },
+            {
+                "field": "createName",
+                "type": "VARCHAR"
+            },
+            {
+                "field": "createTime",
+                "type": "DATETIME"
+            },
+            {
+                "field": "employeeIds",
+                "type": "VARCHAR"
+            },
+            {
+                "field": "marketId",
+                "type": "INT"
+            },
+            {
+                "field": "menuIds",
+                "type": "VARCHAR"
+            },
+            {
+                "field": "remark",
+                "type": "VARCHAR"
+            },
+            {
+                "field": "roleName",
+                "type": "VARCHAR"
+            },
+            {
+                "field": "updateTime",
+                "type": "DATETIME"
+            },
+            {
+                "field": "orgId",
+                "type": "INT"
+            },
+            {
+                "field": "role_Id",
+                "type": "INT"
+            },
+            {
+                "field": "employee_Id",
+                "type": "INT"
+            }
+        ]
+    }
+}
